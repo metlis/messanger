@@ -7,6 +7,14 @@ verify_ssl = true
 
 [packages]
 flask = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
+psycopg2-binary = "*"
+flask-script = "*"
+flask-login = "*"
+werkzeug = "*"
+email-validator = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.7"
