@@ -1,6 +1,6 @@
-from flask import request, abort, Blueprint
+from flask import jsonify, request, abort, Blueprint
 from flask_login import login_user
-from email_validator import validate_email
+from email_validator import validate_email, EmailNotValidError
 
 from models import db, User
 
@@ -10,40 +10,76 @@ auth_handler = Blueprint('auth_handler', __name__)
 
 @auth_handler.route('/register', methods=['POST'])
 def register():
-    try:
-        email = request.form['email']
-        validate_email(email)
+    email = request.form.get('email', None)
+    username = request.form.get('username', None)
+    password = request.form.get('password', None)
 
-        password = request.form['password']
-        username = request.form['username']
-        if len(password) < 6 or len(username) == 0:
-            raise Exception('Invalid credentials')
+    response = {
+        'errors': {},
+        'email': email,
+        'username': username,
+    }
 
+    if email is None or len(email) == 0:
+        response['errors']['email'] = 'Email is not provided'
+    else:
+        try:
+            validate_email(email)
+        except EmailNotValidError:
+            response['errors']['email'] = 'Email is not valid'
+
+    if password is None or len(password) == 0:
+        response['errors']['password'] = 'Password is not provided'
+    elif len(password) < 6:
+        response['errors']['password'] = 'Password is less than 6 characters long'
+
+    if username is None or len(username) == 0:
+        response['errors']['username'] = 'Username is not provided'
+
+    if len(response['errors'].keys()) == 0:
         user = User.query.filter((User.email == email) | (User.username == username)).first()
-        if not user:
+        if user:
+            if user.email == email:
+                response['errors']['email'] = 'Email is not unique'
+            if user.username == username:
+                response['errors']['username'] = 'Username is not unique'
+        else:
             user = User(username, password, email)
             db.session.add(user)
             db.session.commit()
-            return '', 201
-        else:
-            abort(400)
-    except Exception as e:
-        print(e)
-        abort(400)
+            login_user(user)
+            response.pop('errors')
+            return jsonify(response), 201
+
+    return jsonify(response), 400
 
 
 @auth_handler.route('/login', methods=['POST'])
 def login():
-    try:
-        username = request.form['username']
-        password = request.form['password']
+    username = request.form.get('username', None)
+    password = request.form.get('password', None)
 
+    response = {
+        'errors': {},
+        'username': username,
+    }
+
+    if username is None or len(username) == 0:
+        response['errors']['username'] = 'Username is not provided'
+
+    if password is None or len(password) == 0:
+        response['errors']['password'] = 'Password is not provided'
+
+    if len(response['errors'].keys()) == 0:
         user = User.query.filter_by(username=username).first()
-        if user and user.verify_password(password):
-            login_user(user)
-            return '', 200
+        if not user:
+            response['errors']['username'] = 'Username is not registered'
         else:
-            abort(401)
-    except Exception as e:
-        print(e)
-        abort(400)
+            if not user.verify_password(password):
+                response['errors']['password'] = 'Password is not correct'
+            else:
+                login_user(user)
+                response.pop('errors')
+                return jsonify(response), 200
+
+    return jsonify(response), 400
