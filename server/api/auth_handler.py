@@ -20,7 +20,7 @@ def register():
         'username': username,
     }
 
-    if email is None or len(email) == 0:
+    if not email:
         response['errors']['email'] = 'Email is not provided'
     else:
         try:
@@ -28,12 +28,12 @@ def register():
         except EmailNotValidError:
             response['errors']['email'] = 'Email is not valid'
 
-    if password is None or len(password) == 0:
+    if not password:
         response['errors']['password'] = 'Password is not provided'
     elif len(password) < 6:
         response['errors']['password'] = 'Password is less than 6 characters long'
 
-    if username is None or len(username) == 0:
+    if not username:
         response['errors']['username'] = 'Username is not provided'
 
     if len(response['errors'].keys()) == 0:
