@@ -14,44 +14,40 @@ def register():
     username = request.form.get('username', None)
     password = request.form.get('password', None)
 
-    response = {
-        'errors': {},
-        'email': email,
-        'username': username,
-    }
+    errors = {}
+    user_data = {}
 
     if not email:
-        response['errors']['email'] = 'Email is not provided'
+        errors['email'] = 'Email is not provided'
     else:
         try:
             validate_email(email)
         except EmailNotValidError:
-            response['errors']['email'] = 'Email is not valid'
+            errors['email'] = 'Email is not valid'
 
     if not password:
-        response['errors']['password'] = 'Password is not provided'
+        errors['password'] = 'Password is not provided'
     elif len(password) < 6:
-        response['errors']['password'] = 'Password is less than 6 characters long'
+        errors['password'] = 'Password is less than 6 characters long'
 
     if not username:
-        response['errors']['username'] = 'Username is not provided'
+        errors['username'] = 'Username is not provided'
 
-    if len(response['errors'].keys()) == 0:
+    if len(errors.keys()) == 0:
         user = User.query.filter((User.email == email) | (User.username == username)).first()
         if user:
             if user.email == email:
-                response['errors']['email'] = 'Email is not unique'
+                errors['email'] = 'Email is not unique'
             if user.username == username:
-                response['errors']['username'] = 'Username is not unique'
+                errors['username'] = 'Username is not unique'
         else:
             user = User(username, password, email)
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            response.pop('errors')
-            return jsonify(response), 201
+            return jsonify(user_data), 201
 
-    return jsonify(response), 400
+    return jsonify(errors), 400
 
 
 @auth_handler.route('/login', methods=['POST'])
@@ -59,27 +55,12 @@ def login():
     username = request.form.get('username', None)
     password = request.form.get('password', None)
 
-    response = {
-        'errors': {},
-        'username': username,
-    }
+    user_data = {}
 
-    if username is None or len(username) == 0:
-        response['errors']['username'] = 'Username is not provided'
-
-    if password is None or len(password) == 0:
-        response['errors']['password'] = 'Password is not provided'
-
-    if len(response['errors'].keys()) == 0:
+    if username and password:
         user = User.query.filter_by(username=username).first()
-        if not user:
-            response['errors']['username'] = 'Username is not registered'
-        else:
-            if not user.verify_password(password):
-                response['errors']['password'] = 'Password is not correct'
-            else:
-                login_user(user)
-                response.pop('errors')
-                return jsonify(response), 200
+        if user and user.verify_password(password):
+            login_user(user)
+            return jsonify(user_data), 200
 
-    return jsonify(response), 400
+    return jsonify('Invalid credentials'), 400
