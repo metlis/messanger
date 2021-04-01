@@ -1,5 +1,5 @@
-from flask import jsonify, request, abort, Blueprint
-from flask_login import login_user
+from flask import jsonify, request, Blueprint
+from flask_login import login_user, logout_user, current_user
 from email_validator import validate_email, EmailNotValidError
 
 from models import db, User
@@ -61,3 +61,11 @@ def login():
             return jsonify(user.get_user_data()), 200
 
     return jsonify('Invalid credentials'), 400
+
+
+@auth_handler.route('/logout', methods=['POST'])
+def logout():
+    if current_user.is_authenticated:
+        logout_user()
+        return '', 204
+    return jsonify('User is not authenticated'), 400
