@@ -15,7 +15,6 @@ def register():
     password = request.form.get('password', None)
 
     errors = {}
-    user_data = {}
 
     if not email:
         errors['email'] = 'Email is not provided'
@@ -45,7 +44,7 @@ def register():
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            return jsonify(user_data), 201
+            return jsonify(user.get_user_data()), 201
 
     return jsonify(errors), 400
 
@@ -55,12 +54,10 @@ def login():
     username = request.form.get('username', None)
     password = request.form.get('password', None)
 
-    user_data = {}
-
     if username and password:
         user = User.query.filter_by(username=username).first()
         if user and user.verify_password(password):
             login_user(user)
-            return jsonify(user_data), 200
+            return jsonify(user.get_user_data()), 200
 
     return jsonify('Invalid credentials'), 400
