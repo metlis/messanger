@@ -14,6 +14,10 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import axios from "axios";
+import { generateErrorStr } from "../utils";
+import { BACKEND_URL } from '../constants.js'
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -119,22 +123,28 @@ const useStyles = makeStyles(theme => ({
 function useRegister() {
   const history = useHistory();
 
-  const login = async (username, email, password) => {
-    console.log(email, password);
-    const res = await fetch(
-      `/auth/signup?username=${username}&email=${email}&password=${password}`
-    ).then(res => res.json());
-    console.log(res);
-    localStorage.setItem("user", res.user);
-    localStorage.setItem("token", res.token);
-    history.push("/dashboard");
+  return async (username, email, password) => {
+    const res = await axios({
+      method: 'post',
+      url: `${BACKEND_URL}/register`,
+      data: {username, email, password},
+      withCredentials: true,
+    })
+      .then(response => response)
+      .catch(error => error.response);
+    if (res.status === 201) {
+      localStorage.setItem("user", JSON.stringify(res.data));
+      history.push("/dashboard");
+    } else {
+      return res.data;
+    }
   };
-  return login;
 }
 
 export default function Register() {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('Registration error');
 
   const register = useRegister();
 
@@ -196,6 +206,7 @@ export default function Register() {
             </Grid>
             <Formik
               initialValues={{
+                username: "",
                 email: "",
                 password: ""
               }}
@@ -217,10 +228,11 @@ export default function Register() {
               ) => {
                 setStatus();
                 register(username, email, password).then(
-                  () => {
-                    // useHistory push to chat
-                    console.log(email, password);
-                    return;
+                  (res) => {
+                    if (res) {
+                      setErrorMessage(generateErrorStr(res));
+                      setOpen(true);
+                    }
                   },
                   error => {
                     setSubmitting(false);
@@ -243,7 +255,6 @@ export default function Register() {
                       </Typography>
                     }
                     fullWidth
-                    id="username"
                     margin="normal"
                     InputLabelProps={{
                       shrink: true
@@ -298,7 +309,6 @@ export default function Register() {
                     error={touched.password && Boolean(errors.password)}
                     value={values.password}
                     onChange={handleChange}
-                    type="password"
                   />
 
                   <Box textAlign="center">
@@ -326,7 +336,7 @@ export default function Register() {
           open={open}
           autoHideDuration={6000}
           onClose={handleClose}
-          message="Email already exists"
+          message={errorMessage}
           action={
             <React.Fragment>
               <IconButton

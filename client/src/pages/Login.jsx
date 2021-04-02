@@ -14,6 +14,9 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import axios from "axios";
+import { BACKEND_URL } from '../constants.js'
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -122,21 +125,27 @@ const useStyles = makeStyles(theme => ({
 function useLogin() {
   const history = useHistory();
 
-  const login = async (email, password) => {
-    console.log(email, password);
-    const res = await fetch(
-      `/auth/login?email=${email}&password=${password}`
-    ).then(res => res.json());
-    localStorage.setItem("user", res.user);
-    localStorage.setItem("token", res.token);
-    history.push("/dashboard");
+  return async (email, password) => {
+    const res = await axios({
+      method: 'post',
+      url: `${ BACKEND_URL }/login`,
+      data: {email, password},
+      withCredentials: true,
+    })
+      .then(response => response)
+      .catch(error => error.response);
+    if (res.status === 200) {
+      localStorage.setItem("user", JSON.stringify(res.data));
+      history.push("/dashboard");
+    } else {
+      return res;
+    }
   };
-  return login;
 }
 
 export default function Login() {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
 
   const history = useHistory();
 
@@ -209,10 +218,8 @@ export default function Login() {
               onSubmit={({ email, password }, { setStatus, setSubmitting }) => {
                 setStatus();
                 login(email, password).then(
-                  () => {
-                    // useHistory push to chat
-                    console.log(email, password);
-                    return;
+                  (res) => {
+                    if (res) setOpen(true);
                   },
                   error => {
                     setSubmitting(false);
@@ -270,7 +277,6 @@ export default function Login() {
                     error={touched.password && Boolean(errors.password)}
                     value={values.password}
                     onChange={handleChange}
-                    type="password"
                   />
 
                   <Box textAlign="center">

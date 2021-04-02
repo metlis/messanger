@@ -1,0 +1,2 @@
+const { REACT_APP_BACKEND_URL_DEV, REACT_APP_BACKEND_URL_PROD } = process.env;
+export const BACKEND_URL = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? REACT_APP_BACKEND_URL_DEV : REACT_APP_BACKEND_URL_PROD;
