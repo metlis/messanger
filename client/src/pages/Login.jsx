@@ -29,10 +29,12 @@ const useStyles = makeStyles(theme => ({
     fontSize: 26,
     paddingBottom: 20,
     color: "#000000",
-    fontWeight: 500
+    fontWeight: 700,
+    fontFamily: "Open Sans"
   },
   heroText: {
     fontSize: 26,
+    fontFamily: "Open Sans",
     textAlign: "center",
     color: "white",
     marginTop: 30,
@@ -169,9 +171,9 @@ export default function Login() {
           <Hidden xsDown>
             <img width={67} src="/images/bubble.svg" />
             <Hidden smDown>
-              <p className={classes.heroText}>
+              <Typography className={classes.heroText}>
                 Converse with anyone with any language
-              </p>
+              </Typography>
             </Hidden>
           </Hidden>
         </Box>
@@ -196,9 +198,13 @@ export default function Login() {
           <Box width="100%" maxWidth={450} p={3} alignSelf="center">
             <Grid container>
               <Grid item xs>
-                <p className={classes.welcome} component="h1" variant="h5">
+                <Typography
+                  className={classes.welcome}
+                  component="h1"
+                  variant="h5"
+                >
                   Welcome back!
-                </p>
+                </Typography>
               </Grid>
             </Grid>
             <Formik

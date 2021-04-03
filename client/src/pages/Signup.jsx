@@ -31,11 +31,11 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: 20,
     color: "#000000",
     fontWeight: 700,
-    fontFamily: "'Open Sans'"
+    fontFamily: "Open Sans"
   },
   heroText: {
     fontSize: 26,
-    fontFamily: "'Open Sans'",
+    fontFamily: "Open Sans",
     textAlign: "center",
     color: "white",
     marginTop: 30,
