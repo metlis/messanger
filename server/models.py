@@ -61,19 +61,18 @@ class Conversation(db.Model):
         return '<Conversation {}>'.format(self.id)
 
     def get_conversation_data(self, user_id):
+        last_message = self.messages.order_by(Message.id.desc()).first()
+        if last_message:
+            last_message = last_message.get_message_data()
         return {
             'id': self.id,
+            'last_message': last_message,
             'user': [user.get_user_data() for user in self.users if user.id != user_id][0],
             'unread_messages': self.messages.filter(Message.is_read == False).count()
         }
 
     def get_conversation_messages(self):
-        return [{
-            'created': message.created,
-            'author_id': message.author_id,
-            'is_read': message.is_read,
-            'text': message.text,
-        } for message in self.messages]
+        return [message.get_message_data() for message in self.messages]
 
 
 class Message(db.Model):
@@ -88,3 +87,11 @@ class Message(db.Model):
 
     def __repr__(self):
         return '<Message {}>'.format(self.id)
+
+    def get_message_data(self):
+        return {
+            'created': self.created,
+            'author_id': self.author_id,
+            'is_read': self.is_read,
+            'text': self.text,
+        }
