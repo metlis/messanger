@@ -15,8 +15,6 @@ function useLogout() {
       url: `${BACKEND_URL}/logout`,
       withCredentials: true,
     })
-      .then(response => response)
-      .catch(error => console.log(error));
   };
 }
 

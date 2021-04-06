@@ -134,8 +134,6 @@ function useLogin() {
       data: {email, password},
       withCredentials: true,
     })
-      .then(response => response)
-      .catch(error => error.response);
     if (res.status === 200) {
       localStorage.setItem("user", JSON.stringify(res.data));
       history.push("/dashboard");

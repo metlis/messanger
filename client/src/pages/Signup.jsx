@@ -130,8 +130,6 @@ function useRegister() {
       data: {username, email, password},
       withCredentials: true,
     })
-      .then(response => response)
-      .catch(error => error.response);
     if (res.status === 201) {
       localStorage.setItem("user", JSON.stringify(res.data));
       history.push("/dashboard");
