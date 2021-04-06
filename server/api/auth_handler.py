@@ -2,7 +2,8 @@ from flask import jsonify, request, Blueprint
 from flask_login import login_user, logout_user, current_user
 from email_validator import validate_email, EmailNotValidError
 
-from models import db, User
+from models import db
+from models.user import User
 
 
 auth_handler = Blueprint('auth_handler', __name__)
