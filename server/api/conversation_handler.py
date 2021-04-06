@@ -58,3 +58,23 @@ def messages(conversation_id):
         db.session.add(message)
         db.session.commit()
         return '', 201
+
+
+@conversation_handler.route('/conversations/<int:conversation_id>/messages/<int:message_id>/mark_as_read',
+                            methods=['POST'])
+@login_required
+def mark_as_read(conversation_id, message_id):
+    conversation = Conversation.query.filter((Conversation.id == conversation_id),
+                                             Conversation.users.any(id=current_user.id)).first()
+
+    if not conversation:
+        return 'Conversation not found', 404
+
+    message = conversation.messages.filter_by(id=message_id).first()
+
+    if not message:
+        return 'Message not found', 404
+
+    message.mark_as_read()
+    db.session.commit()
+    return 'Message marked as read', 200

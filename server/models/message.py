@@ -24,3 +24,6 @@ class Message(db.Model):
             'is_read': self.is_read,
             'text': self.text,
         }
+
+    def mark_as_read(self):
+        self.is_read = True
