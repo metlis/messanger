@@ -15,23 +15,23 @@ def conversations():
     if request.method == 'GET':
         return jsonify(current_user.get_user_conversations())
     else:
-        user_id = request.json.get('user_id', '')
+        interlocutor_id = request.json.get('interlocutor_id', '')
         id_error_message = 'Valid user ID must be provided'
 
-        if not user_id or int(user_id) == current_user.id:
+        if not interlocutor_id or int(interlocutor_id) == current_user.id:
             return id_error_message, 400
 
-        user = User.query.filter_by(id=user_id).first()
-        if not user:
+        interlocutor = User.query.filter_by(id=interlocutor_id).first()
+        if not interlocutor:
             return id_error_message, 400
 
-        conversation = Conversation.query.filter(Conversation.users.any(id=user.id),
+        conversation = Conversation.query.filter(Conversation.users.any(id=interlocutor.id),
                                                  Conversation.users.any(id=current_user.id)).first()
         if conversation:
             return 'Conversation already exists', 409
 
         conversation = Conversation()
-        conversation.users.extend([user, current_user])
+        conversation.users.extend([interlocutor, current_user])
         db.session.add(conversation)
         db.session.commit()
         return '', 201
