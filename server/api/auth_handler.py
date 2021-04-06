@@ -68,5 +68,5 @@ def login():
 def logout():
     if current_user.is_authenticated:
         logout_user()
-        return '', 204
+        return '', 200
     return jsonify('User is not authenticated'), 400
