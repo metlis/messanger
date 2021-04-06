@@ -16,7 +16,6 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { generateErrorStr } from "../utils";
-import { BACKEND_URL } from '../constants.js'
 
 
 const useStyles = makeStyles(theme => ({
@@ -126,7 +125,7 @@ function useRegister() {
   return async (username, email, password) => {
     const res = await axios({
       method: 'post',
-      url: `${BACKEND_URL}/register`,
+      url: '/register',
       data: {username, email, password},
       withCredentials: true,
     })

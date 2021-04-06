@@ -15,7 +15,6 @@ import * as Yup from "yup";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
-import { BACKEND_URL } from '../constants.js'
 
 
 const useStyles = makeStyles(theme => ({
@@ -130,7 +129,7 @@ function useLogin() {
   return async (email, password) => {
     const res = await axios({
       method: 'post',
-      url: `${ BACKEND_URL }/login`,
+      url: '/login',
       data: {email, password},
       withCredentials: true,
     })

@@ -5,14 +5,13 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
-import { BACKEND_URL } from '../constants.js'
 
 
 function useLogout() {
   return async () => {
     await axios({
       method: 'post',
-      url: `${BACKEND_URL}/logout`,
+      url: '/logout',
       withCredentials: true,
     })
   };
