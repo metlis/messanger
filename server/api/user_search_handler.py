@@ -2,7 +2,7 @@ from flask import jsonify, request, Blueprint
 from flask_login import login_required
 from sqlalchemy import func
 
-from models import User
+from models.user import User
 
 user_search_handler = Blueprint('user_search_handler', __name__)
 

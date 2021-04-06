@@ -1,7 +1,10 @@
 from flask import jsonify, request, Blueprint
 from flask_login import login_required, current_user
 
-from models import db, Conversation, Message, User
+from models import db
+from models.user import User
+from models.conversation import Conversation
+from models.message import Message
 
 conversation_handler = Blueprint('conversation_handler', __name__)
 
