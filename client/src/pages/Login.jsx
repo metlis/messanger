@@ -131,27 +131,26 @@ function useLogin() {
   const dispatch = useDispatch();
 
   return async (email, password) => {
-    const res = await axios({
-      method: 'post',
-      url: '/login',
-      data: {email, password},
-      withCredentials: true,
-    })
-    if (res.status === 200) {
+    try {
+      const res = await axios({
+        method: 'post',
+        url: '/login',
+        data: {email, password},
+        withCredentials: true,
+      })
       dispatch(update(res.data));
       history.push("/dashboard");
-    } else {
-      return res;
+    } catch (err) {
+      return err.response.data;
     }
+    return null;
   };
 }
 
 export default function Login() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-
   const history = useHistory();
-
   const noData = useSelector(noUserData);
 
   React.useEffect(() => {
@@ -223,17 +222,14 @@ export default function Login() {
                   .max(100, "Password is too long")
                   .min(6, "Password too short")
               })}
-              onSubmit={({ email, password }, { setStatus, setSubmitting }) => {
+              onSubmit={async ({ email, password }, { setStatus, setSubmitting }) => {
                 setStatus();
-                login(email, password).then(
-                  (res) => {
-                    if (res) setOpen(true);
-                  },
-                  error => {
-                    setSubmitting(false);
-                    setStatus(error);
-                  }
-                );
+                const login_error = await login(email, password);
+                if (login_error) {
+                  setOpen(true);
+                  setSubmitting(false);
+                  setStatus(login_error);
+                }
               }}
             >
               {({ handleSubmit, handleChange, values, touched, errors }) => (

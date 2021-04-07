@@ -1,30 +1,42 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
-import { useHistory } from "react-router-dom";
 import axios from "axios";
-import {useDispatch, useSelector} from 'react-redux';
+import Snackbar from "@material-ui/core/Snackbar";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
 import { clear, noUserData, selectUser } from "../store/user";
 
 
 function useLogout() {
+  const history = useHistory();
+  const dispatch = useDispatch();
+
   return async () => {
-    await axios({
-      method: 'post',
-      url: '/logout',
-      withCredentials: true,
-    })
-  };
+    try {
+      await axios({
+        method: 'post',
+        url: '/logout',
+        withCredentials: true,
+      });
+      dispatch(clear());
+      history.push("/login");
+    } catch (err) {
+      return err.response.data;
+    }
+    return null;
+  }
 }
 
 export default function Dashboard() {
   const history = useHistory();
-
-  const dispatch = useDispatch();
-
   const noData = useSelector(noUserData);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") return;
+    setOpen(false);
+  };
 
   const logout = useLogout();
 
@@ -38,15 +50,36 @@ export default function Dashboard() {
       <p>Dashboard</p>
       <p>User: {JSON.stringify(useSelector(selectUser))}</p>
       <button
-        onClick={() => {
-          logout().then(() => {
-            dispatch(clear());
-            history.push("/login");
-          })
+        onClick={
+          async () => {
+            const logout_error = await logout();
+            if (logout_error) setOpen(true);
         }}
       >
         Logout
       </button>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center"
+        }}
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message="Logout failed"
+        action={
+          <React.Fragment>
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleClose}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </React.Fragment>
+        }
+      />
     </>
   );
 }

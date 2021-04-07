@@ -123,22 +123,22 @@ const useStyles = makeStyles(theme => ({
 
 function useRegister() {
   const history = useHistory();
-
   const dispatch = useDispatch();
 
   return async (username, email, password) => {
-    const res = await axios({
-      method: 'post',
-      url: '/register',
-      data: {username, email, password},
-      withCredentials: true,
-    })
-    if (res.status === 201) {
+    try {
+      const res = await axios({
+        method: 'post',
+        url: '/register',
+        data: {username, email, password},
+        withCredentials: true,
+      });
       dispatch(update(res.data));
       history.push("/dashboard");
-    } else {
-      return res.data;
+    } catch (err) {
+      return err.response.data;
     }
+    return null;
   };
 }
 
@@ -224,23 +224,18 @@ export default function Register() {
                   .max(100, "Password is too long")
                   .min(6, "Password too short")
               })}
-              onSubmit={(
+              onSubmit={async (
                 { username, email, password },
                 { setStatus, setSubmitting }
               ) => {
                 setStatus();
-                register(username, email, password).then(
-                  (res) => {
-                    if (res) {
-                      setErrorMessage(generateErrorStr(res));
-                      setOpen(true);
-                    }
-                  },
-                  error => {
-                    setSubmitting(false);
-                    setStatus(error);
-                  }
-                );
+                const registration_error = await register(username, email, password);
+                if (registration_error) {
+                  setErrorMessage(generateErrorStr(registration_error));
+                  setOpen(true);
+                  setSubmitting(false);
+                  setStatus(registration_error);
+                }
               }}
             >
               {({ handleSubmit, handleChange, values, touched, errors }) => (
