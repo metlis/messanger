@@ -15,6 +15,8 @@ import * as Yup from "yup";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
+import {useDispatch, useSelector} from "react-redux";
+import { update, noUserData } from "../store/user";
 
 
 const useStyles = makeStyles(theme => ({
@@ -126,6 +128,8 @@ const useStyles = makeStyles(theme => ({
 function useLogin() {
   const history = useHistory();
 
+  const dispatch = useDispatch();
+
   return async (email, password) => {
     const res = await axios({
       method: 'post',
@@ -134,7 +138,7 @@ function useLogin() {
       withCredentials: true,
     })
     if (res.status === 200) {
-      localStorage.setItem("user", JSON.stringify(res.data));
+      dispatch(update(res.data));
       history.push("/dashboard");
     } else {
       return res;
@@ -148,10 +152,11 @@ export default function Login() {
 
   const history = useHistory();
 
+  const noData = useSelector(noUserData);
+
   React.useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) history.push("/dashboard");
-  }, []);
+    if (!noData) history.push("/dashboard");
+  });
 
   const login = useLogin();
 
