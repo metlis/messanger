@@ -1,9 +1,5 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Project setup
-
-Create **.env** file and set REACT_APP_BACKEND_URL_DEV and REACT_APP_BACKEND_URL_PROD to the urls your backend is running on
-
 ## Available Scripts
 
 In the project directory, you can run:
