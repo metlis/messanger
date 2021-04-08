@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Box from "@material-ui/core/Box";
@@ -10,38 +9,16 @@ import ErrorSnackbar from "../components/ErrorSnackbar";
 import LoginForm from "../components/authentication/LoginForm";
 import RootContainer from "../components/authentication/RootContainer";
 import ContentContainer from "../components/authentication/ContentContainer";
-import { update, noUserData } from "../store/user";
+import { noUserData, loginUser } from "../store/user";
 import { closeSnackbar } from "../utils";
-
-
-// Login middleware placeholder
-function useLogin() {
-  const history = useHistory();
-  const dispatch = useDispatch();
-
-  return async (email, password) => {
-    try {
-      const res = await axios({
-        method: 'post',
-        url: '/login',
-        data: {email, password},
-        withCredentials: true,
-      })
-      dispatch(update(res.data));
-      history.push("/dashboard");
-    } catch (err) {
-      return err.response.data;
-    }
-    return null;
-  };
-}
 
 
 export default function Login() {
   const [open, setOpen] = React.useState(false);
   const history = useHistory();
+  const dispatch = useDispatch();
   const noData = useSelector(noUserData);
-  const login = useLogin();
+  const login = loginUser(history, dispatch);
   const handleClose = closeSnackbar(setOpen);
 
   React.useEffect(() => {

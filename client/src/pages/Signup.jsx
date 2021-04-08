@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Box from "@material-ui/core/Box";
@@ -10,38 +9,17 @@ import ErrorSnackbar from "../components/ErrorSnackbar";
 import SignUpForm from "../components/authentication/SignUpForm";
 import ContentContainer from "../components/authentication/ContentContainer";
 import RootContainer from "../components/authentication/RootContainer";
-import { update, noUserData } from "../store/user";
+import { noUserData, registerUser } from "../store/user";
 import { closeSnackbar } from "../utils";
-
-
-function useRegister() {
-  const history = useHistory();
-  const dispatch = useDispatch();
-
-  return async (username, email, password) => {
-    try {
-      const res = await axios({
-        method: 'post',
-        url: '/register',
-        data: {username, email, password},
-        withCredentials: true,
-      });
-      dispatch(update(res.data));
-      history.push("/dashboard");
-    } catch (err) {
-      return err.response.data;
-    }
-    return null;
-  };
-}
 
 
 export default function Register() {
   const [open, setOpen] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('Registration error');
   const history = useHistory();
+  const dispatch = useDispatch();
   const noData = useSelector(noUserData);
-  const register = useRegister();
+  const register = registerUser(history, dispatch);
   const handleClose = closeSnackbar(setOpen);
 
   React.useEffect(() => {
