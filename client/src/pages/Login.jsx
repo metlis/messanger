@@ -11,12 +11,12 @@ import LoginForm from "../components/authentication/LoginForm";
 import RootContainer from "../components/authentication/RootContainer";
 import ContentContainer from "../components/authentication/ContentContainer";
 import { update, noUserData } from "../store/user";
+import { closeSnackbar } from "../utils";
 
 
 // Login middleware placeholder
 function useLogin() {
   const history = useHistory();
-
   const dispatch = useDispatch();
 
   return async (email, password) => {
@@ -41,17 +41,12 @@ export default function Login() {
   const [open, setOpen] = React.useState(false);
   const history = useHistory();
   const noData = useSelector(noUserData);
+  const login = useLogin();
+  const handleClose = closeSnackbar(setOpen);
 
   React.useEffect(() => {
     if (!noData) history.push("/dashboard");
   });
-
-  const login = useLogin();
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") return;
-    setOpen(false);
-  };
 
   return (
     <RootContainer>

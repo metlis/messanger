@@ -11,6 +11,7 @@ import SignUpForm from "../components/authentication/SignUpForm";
 import ContentContainer from "../components/authentication/ContentContainer";
 import RootContainer from "../components/authentication/RootContainer";
 import { update, noUserData } from "../store/user";
+import { closeSnackbar } from "../utils";
 
 
 function useRegister() {
@@ -38,17 +39,10 @@ function useRegister() {
 export default function Register() {
   const [open, setOpen] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('Registration error');
-
-  const register = useRegister();
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") return;
-    setOpen(false);
-  };
-
   const history = useHistory();
-
   const noData = useSelector(noUserData);
+  const register = useRegister();
+  const handleClose = closeSnackbar(setOpen);
 
   React.useEffect(() => {
     if (!noData) history.push("/dashboard");

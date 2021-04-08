@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import ErrorSnackbar from "../components/ErrorSnackbar";
 import { clear, noUserData, selectUser } from "../store/user";
+import { closeSnackbar } from "../utils";
 
 
 function useLogout() {
@@ -27,15 +28,10 @@ function useLogout() {
 }
 
 export default function Dashboard() {
+  const [open, setOpen] = React.useState(false);
   const history = useHistory();
   const noData = useSelector(noUserData);
-  const [open, setOpen] = React.useState(false);
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") return;
-    setOpen(false);
-  };
-
+  const handleClose = closeSnackbar(setOpen);
   const logout = useLogout();
 
   React.useEffect(() => {
