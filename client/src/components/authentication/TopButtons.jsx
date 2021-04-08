@@ -1,6 +1,7 @@
 import React from "react";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
+import Hidden from "@material-ui/core/Hidden";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
@@ -14,7 +15,10 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "#ffffff",
     color: "#3a8dff",
     boxShadow: "none",
-    marginRight: 35
+    marginRight: 35,
+    [theme.breakpoints.down('sm')]: {
+      marginRight: 0,
+    }
   },
   noAccBtn: {
     fontSize: 14,
@@ -25,6 +29,13 @@ const useStyles = makeStyles(theme => ({
     whiteSpace: "nowrap"
   },
   link: { textDecoration: "none", display: "flex", flexWrap: "nowrap" },
+  container: {
+    alignSelf: "flex-end",
+    [theme.breakpoints.down('sm')]: {
+      alignSelf: "center",
+    },
+    alignItems: "center",
+  }
 }));
 
 
@@ -32,11 +43,13 @@ export default function TopButtons(props) {
   const classes = useStyles();
   const isLogin = props.page === 'login';
   return (
-    <Box p={1} alignSelf="flex-end" alignItems="center">
+    <Box p={1} className={classes.container}>
       <Link to={isLogin ? '/signup' : '/login'} className={classes.link}>
-        <Button className={classes.noAccBtn}>
-          {isLogin ? 'Don\'t have an account?' : 'Already have an account?'}
-        </Button>
+        <Hidden xsDown>
+          <Button className={classes.noAccBtn}>
+            {isLogin ? 'Don\'t have an account?' : 'Already have an account?'}
+          </Button>
+        </Hidden>
         <Button
           color="background"
           className={classes.accBtn}

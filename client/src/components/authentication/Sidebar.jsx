@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
   overlay: {
     backgroundImage:
-      "linear-gradient(180deg, rgb(58,141,255, 0.75) 0%, rgb(134,185,255, 0.75) 100%)",
+      "linear-gradient(180deg, rgb(66, 135, 245, 0.85) 0%, rgb(134, 185, 255, 0.85) 100%)",
     backgroundSize: "cover",
     backgroundPosition: "center",
     flexDirection: "column",
