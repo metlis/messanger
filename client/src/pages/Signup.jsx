@@ -18,12 +18,12 @@ export default function Register() {
   const [errorMessage, setErrorMessage] = React.useState('Registration error');
   const history = useHistory();
   const dispatch = useDispatch();
-  const noData = useSelector(noUserData);
-  const register = registerUser(history, dispatch);
+  const noUser = useSelector(noUserData);
+  const register = registerUser(history, dispatch,{success: "/dashboard"});
   const handleClose = closeSnackbar(setOpen);
 
   React.useEffect(() => {
-    if (!noData) history.push("/dashboard");
+    if (!noUser) history.push("/dashboard");
   });
 
   return (

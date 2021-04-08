@@ -2,7 +2,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import ErrorSnackbar from "../components/ErrorSnackbar";
-import { noUserData, selectUser, logoutUser } from "../store/user";
+import { noUserData, selectUser, logoutUser, getUserData } from "../store/user";
 import { closeSnackbar } from "../utils";
 
 
@@ -10,12 +10,15 @@ export default function Dashboard() {
   const [open, setOpen] = React.useState(false);
   const history = useHistory();
   const dispatch = useDispatch();
-  const noData = useSelector(noUserData);
+  const noUser = useSelector(noUserData);
   const handleClose = closeSnackbar(setOpen);
-  const logout = logoutUser(history, dispatch);
+  const logout = logoutUser(history, dispatch, {success: "/login"});
+  const getUser = getUserData(history, dispatch, {error: "/login"});
 
   React.useEffect(() => {
-    if (noData) history.push("/login");
+    (async () => {
+      if (noUser) await getUser();
+    })();
   });
 
   return (
