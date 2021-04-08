@@ -1,5 +1,5 @@
 from flask import jsonify, request, Blueprint
-from flask_login import login_user
+from flask_login import login_user, logout_user, current_user
 from email_validator import validate_email, EmailNotValidError
 
 from models import db
@@ -11,9 +11,9 @@ auth_handler = Blueprint('auth_handler', __name__)
 
 @auth_handler.route('/register', methods=['POST'])
 def register():
-    email = request.form.get('email', None)
-    username = request.form.get('username', None)
-    password = request.form.get('password', None)
+    email = request.json.get('email', None)
+    username = request.json.get('username', None)
+    password = request.json.get('password', None)
 
     errors = {}
 
@@ -52,13 +52,21 @@ def register():
 
 @auth_handler.route('/login', methods=['POST'])
 def login():
-    username = request.form.get('username', None)
-    password = request.form.get('password', None)
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
 
-    if username and password:
-        user = User.query.filter_by(username=username).first()
+    if email and password:
+        user = User.query.filter_by(email=email).first()
         if user and user.verify_password(password):
             login_user(user)
             return jsonify(user.get_user_data()), 200
 
     return jsonify('Invalid credentials'), 400
+
+
+@auth_handler.route('/logout', methods=['POST'])
+def logout():
+    if current_user.is_authenticated:
+        logout_user()
+        return '', 200
+    return jsonify('User is not authenticated'), 400

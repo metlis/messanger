@@ -14,6 +14,11 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import axios from "axios";
+import { generateErrorStr } from "../utils";
+import {useDispatch, useSelector} from "react-redux";
+import { update, noUserData } from "../store/user";
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,11 +32,11 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: 20,
     color: "#000000",
     fontWeight: 700,
-    fontFamily: "'Open Sans'"
+    fontFamily: "Open Sans"
   },
   heroText: {
     fontSize: 26,
-    fontFamily: "'Open Sans'",
+    fontFamily: "Open Sans",
     textAlign: "center",
     color: "white",
     marginTop: 30,
@@ -118,23 +123,29 @@ const useStyles = makeStyles(theme => ({
 
 function useRegister() {
   const history = useHistory();
+  const dispatch = useDispatch();
 
-  const login = async (username, email, password) => {
-    console.log(email, password);
-    const res = await fetch(
-      `/auth/signup?username=${username}&email=${email}&password=${password}`
-    ).then(res => res.json());
-    console.log(res);
-    localStorage.setItem("user", res.user);
-    localStorage.setItem("token", res.token);
-    history.push("/dashboard");
+  return async (username, email, password) => {
+    try {
+      const res = await axios({
+        method: 'post',
+        url: '/register',
+        data: {username, email, password},
+        withCredentials: true,
+      });
+      dispatch(update(res.data));
+      history.push("/dashboard");
+    } catch (err) {
+      return err.response.data;
+    }
+    return null;
   };
-  return login;
 }
 
 export default function Register() {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('Registration error');
 
   const register = useRegister();
 
@@ -145,10 +156,11 @@ export default function Register() {
 
   const history = useHistory();
 
+  const noData = useSelector(noUserData);
+
   React.useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) history.push("/dashboard");
-  }, []);
+    if (!noData) history.push("/dashboard");
+  });
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -156,7 +168,7 @@ export default function Register() {
       <Grid item xs={false} sm={4} md={5} className={classes.image}>
         <Box className={classes.overlay}>
           <Hidden xsDown>
-            <img width={67} src="/images/chatBubble.png" />
+            <img width={67} src="/images/bubble.svg" alt="Chat bubble" />
             <Hidden smDown>
               <Typography className={classes.heroText}>
                 Converse with anyone with any language
@@ -196,6 +208,7 @@ export default function Register() {
             </Grid>
             <Formik
               initialValues={{
+                username: "",
                 email: "",
                 password: ""
               }}
@@ -211,22 +224,18 @@ export default function Register() {
                   .max(100, "Password is too long")
                   .min(6, "Password too short")
               })}
-              onSubmit={(
+              onSubmit={async (
                 { username, email, password },
                 { setStatus, setSubmitting }
               ) => {
                 setStatus();
-                register(username, email, password).then(
-                  () => {
-                    // useHistory push to chat
-                    console.log(email, password);
-                    return;
-                  },
-                  error => {
-                    setSubmitting(false);
-                    setStatus(error);
-                  }
-                );
+                const registration_error = await register(username, email, password);
+                if (registration_error) {
+                  setErrorMessage(generateErrorStr(registration_error));
+                  setOpen(true);
+                  setSubmitting(false);
+                  setStatus(registration_error);
+                }
               }}
             >
               {({ handleSubmit, handleChange, values, touched, errors }) => (
@@ -243,7 +252,6 @@ export default function Register() {
                       </Typography>
                     }
                     fullWidth
-                    id="username"
                     margin="normal"
                     InputLabelProps={{
                       shrink: true
@@ -298,7 +306,6 @@ export default function Register() {
                     error={touched.password && Boolean(errors.password)}
                     value={values.password}
                     onChange={handleChange}
-                    type="password"
                   />
 
                   <Box textAlign="center">
@@ -326,7 +333,7 @@ export default function Register() {
           open={open}
           autoHideDuration={6000}
           onClose={handleClose}
-          message="Email already exists"
+          message={errorMessage}
           action={
             <React.Fragment>
               <IconButton

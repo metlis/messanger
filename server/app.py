@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from flask_login import LoginManager
+from flask_cors import CORS
 
 from models import db
 from models.user import User
@@ -13,6 +14,10 @@ from api.user_search_handler import user_search_handler
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
+cors = CORS(app, resources={r"/*": {
+    "origins": os.environ['FRONTEND_URL'],
+    "supports_credentials": True,
+}})
 
 login_manager = LoginManager(app)
 db.init_app(app)

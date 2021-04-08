@@ -14,6 +14,10 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import axios from "axios";
+import {useDispatch, useSelector} from "react-redux";
+import { update, noUserData } from "../store/user";
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,10 +30,12 @@ const useStyles = makeStyles(theme => ({
     fontSize: 26,
     paddingBottom: 20,
     color: "#000000",
-    fontWeight: 500
+    fontWeight: 700,
+    fontFamily: "Open Sans"
   },
   heroText: {
     fontSize: 26,
+    fontFamily: "Open Sans",
     textAlign: "center",
     color: "white",
     marginTop: 30,
@@ -122,28 +128,34 @@ const useStyles = makeStyles(theme => ({
 function useLogin() {
   const history = useHistory();
 
-  const login = async (email, password) => {
-    console.log(email, password);
-    const res = await fetch(
-      `/auth/login?email=${email}&password=${password}`
-    ).then(res => res.json());
-    localStorage.setItem("user", res.user);
-    localStorage.setItem("token", res.token);
-    history.push("/dashboard");
+  const dispatch = useDispatch();
+
+  return async (email, password) => {
+    try {
+      const res = await axios({
+        method: 'post',
+        url: '/login',
+        data: {email, password},
+        withCredentials: true,
+      })
+      dispatch(update(res.data));
+      history.push("/dashboard");
+    } catch (err) {
+      return err.response.data;
+    }
+    return null;
   };
-  return login;
 }
 
 export default function Login() {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
-
+  const [open, setOpen] = React.useState(false);
   const history = useHistory();
+  const noData = useSelector(noUserData);
 
   React.useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) history.push("/dashboard");
-  }, []);
+    if (!noData) history.push("/dashboard");
+  });
 
   const login = useLogin();
 
@@ -158,11 +170,11 @@ export default function Login() {
       <Grid item xs={false} sm={4} md={5} className={classes.image}>
         <Box className={classes.overlay}>
           <Hidden xsDown>
-            <img width={67} src="/images/chatBubble.png" />
+            <img width={67} src="/images/bubble.svg" alt="Chat bubble" />
             <Hidden smDown>
-              <p className={classes.heroText}>
+              <Typography className={classes.heroText}>
                 Converse with anyone with any language
-              </p>
+              </Typography>
             </Hidden>
           </Hidden>
         </Box>
@@ -187,9 +199,13 @@ export default function Login() {
           <Box width="100%" maxWidth={450} p={3} alignSelf="center">
             <Grid container>
               <Grid item xs>
-                <p className={classes.welcome} component="h1" variant="h5">
+                <Typography
+                  className={classes.welcome}
+                  component="h1"
+                  variant="h5"
+                >
                   Welcome back!
-                </p>
+                </Typography>
               </Grid>
             </Grid>
             <Formik
@@ -206,19 +222,14 @@ export default function Login() {
                   .max(100, "Password is too long")
                   .min(6, "Password too short")
               })}
-              onSubmit={({ email, password }, { setStatus, setSubmitting }) => {
+              onSubmit={async ({ email, password }, { setStatus, setSubmitting }) => {
                 setStatus();
-                login(email, password).then(
-                  () => {
-                    // useHistory push to chat
-                    console.log(email, password);
-                    return;
-                  },
-                  error => {
-                    setSubmitting(false);
-                    setStatus(error);
-                  }
-                );
+                const login_error = await login(email, password);
+                if (login_error) {
+                  setOpen(true);
+                  setSubmitting(false);
+                  setStatus(login_error);
+                }
               }}
             >
               {({ handleSubmit, handleChange, values, touched, errors }) => (
@@ -270,7 +281,6 @@ export default function Login() {
                     error={touched.password && Boolean(errors.password)}
                     value={values.password}
                     onChange={handleChange}
-                    type="password"
                   />
 
                   <Box textAlign="center">
