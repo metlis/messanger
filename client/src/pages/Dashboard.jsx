@@ -1,10 +1,8 @@
 import React from "react";
 import axios from "axios";
-import Snackbar from "@material-ui/core/Snackbar";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
+import ErrorSnackbar from "../components/ErrorSnackbar";
 import { clear, noUserData, selectUser } from "../store/user";
 
 
@@ -58,27 +56,10 @@ export default function Dashboard() {
       >
         Logout
       </button>
-      <Snackbar
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center"
-        }}
+      <ErrorSnackbar
         open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
+        handleClose={handleClose}
         message="Logout failed"
-        action={
-          <React.Fragment>
-            <IconButton
-              size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={handleClose}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </React.Fragment>
-        }
       />
     </>
   );
