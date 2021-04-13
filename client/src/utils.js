@@ -4,3 +4,10 @@ export function generateErrorStr(data) {
     }
     return data;
 }
+
+export function closeSnackbar(openerFn) {
+    return (event, reason) => {
+        if (reason === "clickaway") return;
+        openerFn(false);
+    }
+}

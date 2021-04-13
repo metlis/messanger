@@ -1,13 +1,13 @@
 from flask import jsonify, request, Blueprint
-from flask_login import login_required
+from flask_login import login_required, current_user
 from sqlalchemy import func
 
 from models.user import User
 
-user_search_handler = Blueprint('user_search_handler', __name__)
+users_handler = Blueprint('users_handler', __name__)
 
 
-@user_search_handler.route('/search_users', methods=['GET'])
+@users_handler.route('/search_users', methods=['GET'])
 @login_required
 def search_users():
     query = request.args.get('query', '').lower()
@@ -17,3 +17,9 @@ def search_users():
     users = User.query.filter(func.lower(User.username).contains(query)).all()
     users = [user.get_user_data() for user in users]
     return jsonify(users), 200
+
+
+@users_handler.route('/user', methods=['GET'])
+@login_required
+def user():
+    return jsonify(current_user.get_user_data()), 200
