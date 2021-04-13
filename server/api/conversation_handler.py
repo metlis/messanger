@@ -78,3 +78,25 @@ def mark_as_read(conversation_id, message_id):
     message.mark_as_read()
     db.session.commit()
     return 'Message marked as read', 200
+
+
+@conversation_handler.route('/conversations/<int:conversation_id>/messages/mark_as_read',
+                            methods=['POST'])
+@login_required
+def bulk_mark_as_read(conversation_id):
+    conversation = Conversation.query.filter(Conversation.id == conversation_id).first()
+
+    if not conversation:
+        return 'Conversation not found', 404
+
+    unread_messages_ids = request.json.get('messages', None)
+    if not unread_messages_ids:
+        return 'Messages IDs not provided', 404
+
+    unread_messages = conversation.messages.filter(Message.id.in_(unread_messages_ids)).all()
+    mappings = []
+    for message in unread_messages:
+        mappings.append({'id': message.id, 'is_read': True})
+    db.session.bulk_update_mappings(Message, mappings)
+    db.session.commit()
+    return 'Messages marked as read', 200

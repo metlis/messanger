@@ -34,7 +34,7 @@ class User(db.Model, UserMixin):
 
     def get_user_conversations(self):
         conversations = Conversation.query.filter(Conversation.users.any(id=self.id)).all()
-        return [c.get_conversation_data() for c in conversations]
+        return [c.get_conversation_data(self.id) for c in conversations]
 
     def get_user_data(self):
         return {

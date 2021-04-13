@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from "axios";
+import {getConversations} from "./conversations";
 
 const initialState = {
   userData: {},
@@ -32,6 +33,8 @@ export const loginUser = (history, dispatch, nextPage={}) => async (email, passw
       withCredentials: true,
     })
     dispatch(update(res.data));
+    await getUserData(history, dispatch)();
+    await getConversations(dispatch)();
     if (nextPage.success) history.push(nextPage.success);
     return null;
   } catch (err) {
@@ -49,6 +52,7 @@ export const registerUser = (history, dispatch, nextPage={}) => async (username,
       withCredentials: true,
     });
     dispatch(update(res.data));
+    await getUserData(history, dispatch)();
     if (nextPage.success) history.push(nextPage.success);
     return null;
   } catch (err) {
