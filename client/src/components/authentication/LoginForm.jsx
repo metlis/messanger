@@ -13,18 +13,22 @@ import WelcomeHeader from "./WelcomeHeader";
 const useStyles = makeStyles(theme => ({
   form: {
     width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1)
+    marginTop: 8,
   },
-  label: { fontSize: 19, color: "rgb(0,0,0,0.4)", paddingLeft: "5px" },
+  label: {
+    fontSize: 19,
+    color: "rgb(0,0,0,0.4)",
+    paddingLeft: 5,
+  },
   inputs: {
     marginTop: ".8rem",
     height: "2rem",
-    padding: "5px"
+    padding: 5,
   },
   forgot: {
     paddingRight: 10,
     color: "#3a8dff"
-  }
+  },
 }));
 
 
@@ -33,7 +37,12 @@ export default function LoginForm(props) {
   const login = props.login;
   const setOpen = props.setOpen;
   return (
-    <Box width="100%" maxWidth={450} p={3} alignSelf="center">
+    <Box
+      width="100%"
+      maxWidth={450}
+      p={3}
+      alignSelf="center"
+    >
       <Grid container>
         <Grid item xs>
           <WelcomeHeader text="Welcome back!" />
@@ -71,7 +80,11 @@ export default function LoginForm(props) {
           >
             <TextField
               id="email"
-              label={<p className={classes.label}>E-mail address</p>}
+              label={
+                <Typography className={classes.label}>
+                  E-mail address
+                </Typography>
+              }
               fullWidth
               margin="normal"
               InputLabelProps={{

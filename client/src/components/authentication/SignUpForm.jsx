@@ -14,13 +14,17 @@ import { generateErrorStr } from "../../utils";
 const useStyles = makeStyles(theme => ({
   form: {
     width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1)
+    marginTop: 8
   },
-  label: { fontSize: 19, color: "rgb(0,0,0,0.4)", paddingLeft: "5px" },
+  label: {
+    fontSize: 19,
+    color: "rgb(0,0,0,0.4)",
+    paddingLeft: 5
+  },
   inputs: {
     marginTop: ".8rem",
     height: "2rem",
-    padding: "5px"
+    padding: 5
   },
 }));
 
@@ -32,7 +36,12 @@ export default function SignUpForm(props) {
   const setOpen = props.setOpen;
 
   return (
-    <Box width="100%" maxWidth={450} p={3} alignSelf="center">
+    <Box
+      width="100%"
+      maxWidth={450}
+      p={3}
+      alignSelf="center"
+    >
       <Grid container>
         <Grid item xs>
           <WelcomeHeader text="Create an account" />

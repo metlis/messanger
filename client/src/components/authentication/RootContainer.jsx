@@ -15,7 +15,11 @@ const useStyles = makeStyles(() => ({
 export default function RootContainer(props) {
   const classes = useStyles();
   return (
-    <Grid container component="main" className={classes.root}>
+    <Grid
+      container
+      component="main"
+      className={classes.root}
+    >
       {props.children}
     </Grid>
   )

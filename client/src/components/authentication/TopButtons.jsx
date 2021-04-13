@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import Hidden from "@material-ui/core/Hidden";
+import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
@@ -15,26 +15,34 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "#ffffff",
     color: "#3a8dff",
     boxShadow: "none",
-    marginRight: 35,
+    marginLeft: 21,
     [theme.breakpoints.down('sm')]: {
-      marginRight: 0,
-    }
+      width: 150,
+      fontSize: 12,
+    },
   },
   noAccBtn: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#b0b0b0",
     fontWeight: 400,
     textAlign: "center",
-    marginRight: 21,
-    whiteSpace: "nowrap"
+    whiteSpace: "nowrap",
+    margin: 'auto',
+    textTransform: 'uppercase'
   },
-  link: { textDecoration: "none", display: "flex", flexWrap: "nowrap" },
+  link: {
+    textDecoration: "none",
+    display: "flex",
+    flexWrap: "nowrap"
+  },
   container: {
     alignSelf: "flex-end",
+    alignItems: "center",
+    marginRight: 30,
     [theme.breakpoints.down('sm')]: {
       alignSelf: "center",
+      marginRight: 0,
     },
-    alignItems: "center",
   }
 }));
 
@@ -45,13 +53,11 @@ export default function TopButtons(props) {
   return (
     <Box p={1} className={classes.container}>
       <Link to={isLogin ? '/signup' : '/login'} className={classes.link}>
-        <Hidden xsDown>
-          <Button className={classes.noAccBtn}>
-            {isLogin ? 'Don\'t have an account?' : 'Already have an account?'}
-          </Button>
-        </Hidden>
+        <Typography className={classes.noAccBtn}>
+          {isLogin ? 'Don\'t have an account?' : 'Already have an account?'}
+        </Typography>
         <Button
-          color="background"
+          color="default"
           className={classes.accBtn}
           variant="contained"
         >

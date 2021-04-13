@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   heroText: {
     fontSize: 26,
     fontFamily: "Open Sans",
@@ -39,11 +39,20 @@ const useStyles = makeStyles(theme => ({
 export default function Sidebar() {
   const classes = useStyles();
   return (
-    <Grid item xs={false} sm={4} md={5}>
+    <Grid
+      item
+      xs={false}
+      sm={4}
+      md={5}
+    >
       <Box className={classes.image}>
         <Box className={classes.overlay}>
           <Hidden xsDown>
-            <img width={67} src="/images/bubble.svg" alt="Chat bubble" />
+            <img
+              width={67}
+              src="/images/bubble.svg"
+              alt="Chat bubble"
+            />
             <Hidden smDown>
               <Typography className={classes.heroText}>
                 Converse with anyone with any language

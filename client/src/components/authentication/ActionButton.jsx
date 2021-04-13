@@ -4,9 +4,9 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   submit: {
-    margin: theme.spacing(3, 2, 2),
+    margin: '24px 16px 16px',
     padding: 10,
     width: 160,
     height: 56,
