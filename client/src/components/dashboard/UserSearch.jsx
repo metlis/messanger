@@ -83,6 +83,7 @@ export default function UserSearch() {
           onKeyUp={processSearchQuery}
           className={classes.searchInput}
           disableUnderline
+          autoComplete="off"
           fullWidth
           startAdornment={
             <InputAdornment position="start">
