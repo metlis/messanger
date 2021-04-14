@@ -16,10 +16,18 @@ export const conversationsSlice = createSlice({
     updateActiveConversation: (state, action) => {
       state.active = action.payload;
     },
+    clearConversations: (state) => {
+      state.list = [];
+      state.active = {};
+    }
   },
 });
 
-export const { updateConversationsList, updateActiveConversation } = conversationsSlice.actions;
+export const {
+  updateConversationsList,
+  updateActiveConversation,
+  clearConversations
+} = conversationsSlice.actions;
 
 export const selectConversations = ({conversations}) => conversations.list;
 export const selectActiveConversation = ({conversations}) => conversations.active;

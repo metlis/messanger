@@ -5,7 +5,7 @@ import FilledInput from "@material-ui/core/FilledInput";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import { makeStyles } from "@material-ui/core/styles";
-import { searchUsers, clear } from "../../store/search";
+import { searchUsers, clearSearch } from "../../store/search";
 import { useDispatch } from "react-redux";
 
 
@@ -60,7 +60,7 @@ export default function UserSearch() {
 
   const processSearchQuery = async (event) => {
     if (event.key === 'Backspace' && event.target.value === '') {
-      dispatch(clear());
+      dispatch(clearSearch());
     } else {
       await search(event.target.value);
     }

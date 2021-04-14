@@ -7,6 +7,8 @@ import {makeStyles} from "@material-ui/core/styles";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { logoutUser } from "../../store/user";
+import { clearConversations } from "../../store/conversations";
+import { clearSearch } from "../../store/search";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
@@ -57,6 +59,12 @@ export default function UserPanel(props) {
   const logout = logoutUser(history, dispatch, {success: "/login"});
   const [anchorEl, setAnchorEl] = React.useState(null);
 
+  const handleLogoutClick = async () => {
+    await logout();
+    dispatch(clearConversations());
+    dispatch(clearSearch());
+  }
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -87,7 +95,7 @@ export default function UserPanel(props) {
         onClose={handleClose}
         keepMounted
       >
-        <MenuItem onClick={logout}>
+        <MenuItem onClick={handleLogoutClick}>
           Logout
         </MenuItem>
       </Menu>
