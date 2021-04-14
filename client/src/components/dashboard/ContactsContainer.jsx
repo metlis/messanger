@@ -6,10 +6,11 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles(() => ({
   contactsContainer: {
     overflowY: 'auto',
-    height: 'calc(100vh - 228px)',
+    height: 'calc(100vh - 248px)',
     marginTop: 32,
     marginLeft: 25,
     paddingRight: 20,
+    paddingBottom: 20,
   },
 }));
 

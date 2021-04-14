@@ -19,6 +19,7 @@ const useStyles = makeStyles(() => ({
     alignItems: "center",
     justifyContent: "space-between",
     cursor: 'pointer',
+    maxWidth: "100%",
     marginTop: 28,
     '&:first-child': {
       marginTop: 0,
@@ -30,10 +31,9 @@ const useStyles = makeStyles(() => ({
     alignItems: "center",
     justifyContent: "flex-start",
     marginLeft: 10,
-    maxWidth: '100%',
+    maxWidth: "calc(100% - 20px)",
     '& p': {
       margin: '5px 0px 0px',
-      overflow: 'hidden'
     }
   },
   username: {
@@ -56,7 +56,7 @@ const useStyles = makeStyles(() => ({
     fontSize: 12,
     textOverflow: "ellipsis",
     overflow: "hidden",
-    maxWidth: "90%",
+    maxWidth: 180,
     whiteSpace: "nowrap",
   },
   lastMessageRead: {

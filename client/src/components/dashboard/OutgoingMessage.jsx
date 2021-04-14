@@ -13,7 +13,8 @@ const useStyles = makeStyles(() => ({
   },
   messageBody: {
     margin: '0 5px 0 15px',
-    fontSize: 15
+    fontSize: 15,
+    maxWidth: '50%'
   },
   messageMeta: {
     color: '#adc0de',
