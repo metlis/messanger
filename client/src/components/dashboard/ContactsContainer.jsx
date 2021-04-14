@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 
 const useStyles = makeStyles(() => ({
-  conversationsContainer: {
+  contactsContainer: {
     overflowY: 'auto',
     height: 'calc(100vh - 228px)',
     marginTop: 32,
@@ -14,10 +14,10 @@ const useStyles = makeStyles(() => ({
 }));
 
 
-export default function ConversationsContainer (props) {
+export default function ContactsContainer (props) {
   const classes = useStyles();
   return (
-    <Box className={classes.conversationsContainer}>
+    <Box className={classes.contactsContainer}>
       {props.children}
     </Box>
   )

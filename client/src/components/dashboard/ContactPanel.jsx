@@ -13,7 +13,7 @@ import { useDispatch } from "react-redux";
 
 
 const useStyles = makeStyles(() => ({
-  conversationContainer: {
+  contactContainer: {
     display: "flex",
     alignSelf: "center",
     alignItems: "center",
@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
       marginTop: 0,
     }
   },
-  conversationAvatarContainer: {
+  contactAvatarContainer: {
     display: "flex",
     alignSelf: "center",
     alignItems: "center",
@@ -70,7 +70,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 
-export default function ConversationPanel(props) {
+export default function ContactPanel(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const setActiveConversation = setConversation(dispatch);
@@ -93,8 +93,8 @@ export default function ConversationPanel(props) {
   }
 
   return (
-    <Box className={classes.conversationContainer} onClick={handleConversationChoice}>
-      <Box className={classes.conversationAvatarContainer}>
+    <Box className={classes.contactContainer} onClick={handleConversationChoice}>
+      <Box className={classes.contactAvatarContainer}>
       <StatusAvatar username={props.interlocutorUsername} />
         <p>
           <span className={classes.username}>

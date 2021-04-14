@@ -2,8 +2,9 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import UserPanel from "./UserPanel";
 import UserSearch from "./UserSearch";
-import ConversationsContainer from "./ConversationsContainer";
-import ConversationPanel from "./ConversationPanel";
+import ContactsContainer from "./ContactsContainer";
+import ContactPanel from "./ContactPanel";
+import ContactsPlaceholder from "./ContactsPlaceholder";
 import { useSelector } from "react-redux";
 import { selectConversations } from "../../store/conversations";
 import { selectQuery, selectSearchResults } from "../../store/search";
@@ -23,7 +24,7 @@ export default function Sidebar(props) {
       const conversation = conversations.find(conv => conv.users.some(convUser => convUser.id === user.id));
       if (conversation) conversationId = conversation.id;
       return (
-        <ConversationPanel
+        <ContactPanel
           key={user.id}
           conversationId={conversationId}
           interlocutorId={user.id}
@@ -36,7 +37,7 @@ export default function Sidebar(props) {
     panels = conversations.map(conv => {
       const interlocutor = (conv.users || []).find(user => user.id !== currentUser.id);
       return (
-        <ConversationPanel
+        <ContactPanel
           key={conv.id}
           conversationId={conv.id}
           interlocutorId={interlocutor.id}
@@ -58,9 +59,14 @@ export default function Sidebar(props) {
     >
       <UserPanel username={currentUser.username} />
       <UserSearch />
-      <ConversationsContainer>
-        {panels}
-      </ConversationsContainer>
+      {panels.length > 0 &&
+        <ContactsContainer>
+          {panels}
+        </ContactsContainer>
+      }
+      {panels.length === 0 &&
+        <ContactsPlaceholder />
+      }
     </Grid>
   )
 }

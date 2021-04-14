@@ -7,6 +7,7 @@ import RootContainer from "../components/RootContainer";
 import Sidebar from "../components/dashboard/Sidebar";
 import ConversationHeader from "../components/dashboard/ConversationHeader";
 import ConversationContent from "../components/dashboard/ConversationContent";
+import MessagePlaceholder from "../components/dashboard/MessagePlaceholder";
 import { noUserData, getUserData } from "../store/user";
 import { getConversations, selectActiveConversation } from '../store/conversations';
 import { closeSnackbar } from "../utils";
@@ -34,7 +35,10 @@ export default function Dashboard() {
     })();
   });
 
-  const toggleDrawer = () => (open) => {
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
     setOpenDrawer(open);
   };
 
@@ -52,6 +56,9 @@ export default function Dashboard() {
         <ConversationHeader toggleDrawer={toggleDrawer} />
         {Boolean(activeConversation.id) &&
           <ConversationContent />
+        }
+        {!Boolean(activeConversation.id) &&
+          <MessagePlaceholder />
         }
       </Grid>
       <ErrorSnackbar
