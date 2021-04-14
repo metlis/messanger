@@ -3,8 +3,13 @@ import Box from "@material-ui/core/Box";
 import Chip from "@material-ui/core/Chip";
 import StatusAvatar from "./StatusAvatar";
 import { makeStyles } from "@material-ui/core/styles";
-import { selectConversations } from "../../store/conversations";
-import { useSelector } from "react-redux";
+import {
+  markMessagesRead,
+  setConversation,
+  getConversations,
+  getNewConversationId
+} from "../../store/conversations";
+import { useDispatch } from "react-redux";
 
 
 const useStyles = makeStyles(() => ({
@@ -51,7 +56,7 @@ const useStyles = makeStyles(() => ({
     fontSize: 12,
     textOverflow: "ellipsis",
     overflow: "hidden",
-    maxWidth: "80%",
+    maxWidth: "90%",
     whiteSpace: "nowrap",
   },
   lastMessageRead: {
@@ -67,22 +72,28 @@ const useStyles = makeStyles(() => ({
 
 export default function ConversationPanel(props) {
   const classes = useStyles();
-  const conversations = useSelector(selectConversations);
+  const dispatch = useDispatch();
+  const setActiveConversation = setConversation(dispatch);
+  const getConversationsList = getConversations(dispatch);
 
-  const getConversation = async () => {
+  const handleConversationChoice = async () => {
     let conversationId = props.conversationId;
     if (!conversationId) {
-      await props.createConversation(props.interlocutorId);
-      await props.getConversations();
-      const conversation = conversations.find(conv => conv.users.some(user => user.id === props.interlocutorId));
-      conversationId = (conversation || {}).id;
+      conversationId = await dispatch(getNewConversationId(props.interlocutorId));
     }
-    props.getConversation(conversationId, props.interlocutorUsername);
+
+    await setActiveConversation(conversationId, props.interlocutorUsername);
+
+    if (props.unreadMessages > 0) {
+      await markMessagesRead(conversationId);
+      await getConversationsList();
+    }
+
     props.setOpenDrawer(false);
   }
 
   return (
-    <Box className={classes.conversationContainer} onClick={getConversation}>
+    <Box className={classes.conversationContainer} onClick={handleConversationChoice}>
       <Box className={classes.conversationAvatarContainer}>
       <StatusAvatar username={props.interlocutorUsername} />
         <p>

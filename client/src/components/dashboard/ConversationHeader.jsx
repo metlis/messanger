@@ -62,7 +62,6 @@ export default function ConversationHeader(props) {
   return (
     <Grid
       container
-      alignSelf="center"
       alignItems="center"
       justify="space-between"
       className={classes.conversationHeader}

@@ -52,7 +52,7 @@ export const getConversations = (dispatch) => async () => {
     }
 };
 
-export const getConversation = (dispatch) => async (id, username) => {
+export const setConversation = (dispatch) => async (id, username) => {
   try {
     const res = await axios({
       method: 'get',
@@ -85,18 +85,25 @@ export const createMessage = () => async (id, text) => {
     }
 };
 
-export const markMessagesRead = async (id, messages) => {
+export const markMessagesRead = async (id) => {
   try {
     await axios({
       method: 'post',
       url: `/conversations/${id}/messages/mark_as_read`,
       withCredentials: true,
-      data: {messages},
     })
     return null;
   } catch (err) {
     return err.response.data;
     }
+};
+
+export const getNewConversationId = (interlocutorId) => async (dispatch, getState) => {
+  await createConversation()(interlocutorId);
+  await getConversations(dispatch)();
+  const conversations = selectConversations(getState());
+  const conversation = conversations.find(conv => conv.users.some(user => user.id === interlocutorId));
+  return (conversation || {}).id
 };
 
 export default conversationsSlice.reducer;

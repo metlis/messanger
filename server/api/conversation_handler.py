@@ -89,11 +89,7 @@ def bulk_mark_as_read(conversation_id):
     if not conversation:
         return 'Conversation not found', 404
 
-    unread_messages_ids = request.json.get('messages', None)
-    if not unread_messages_ids:
-        return 'Messages IDs not provided', 404
-
-    unread_messages = conversation.messages.filter(Message.id.in_(unread_messages_ids)).all()
+    unread_messages = conversation.messages.filter(Message.is_read == False).all()
     mappings = []
     for message in unread_messages:
         mappings.append({'id': message.id, 'is_read': True})

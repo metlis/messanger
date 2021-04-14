@@ -4,19 +4,17 @@ import UserPanel from "./UserPanel";
 import UserSearch from "./UserSearch";
 import ConversationsContainer from "./ConversationsContainer";
 import ConversationPanel from "./ConversationPanel";
-import { useDispatch, useSelector } from "react-redux";
-import { getConversation, createConversation, getConversations } from "../../store/conversations";
+import { useSelector } from "react-redux";
+import { selectConversations } from "../../store/conversations";
 import { selectQuery, selectSearchResults } from "../../store/search";
+import {selectUser} from "../../store/user";
 
 
 export default function Sidebar(props) {
-  const dispatch = useDispatch();
   const searchQuery = useSelector(selectQuery);
   const foundUsers = useSelector(selectSearchResults);
-  const fetch = getConversation(dispatch);
-  const fetchAll = getConversations(dispatch);
-  const create = createConversation(dispatch);
-  const conversations = props.conversations || [];
+  const conversations = useSelector(selectConversations);
+  const currentUser = useSelector(selectUser);
 
   let panels = [];
   if (searchQuery) {
@@ -30,16 +28,13 @@ export default function Sidebar(props) {
           conversationId={conversationId}
           interlocutorId={user.id}
           interlocutorUsername={user.username}
-          createConversation={create}
-          getConversation={fetch}
-          getConversations={fetchAll}
           setOpenDrawer={props.setOpenDrawer}
         />
       )
     });
   } else {
     panels = conversations.map(conv => {
-      const interlocutor = (conv.users || []).find(user => user.id !== props.userData.id);
+      const interlocutor = (conv.users || []).find(user => user.id !== currentUser.id);
       return (
         <ConversationPanel
           key={conv.id}
@@ -48,7 +43,6 @@ export default function Sidebar(props) {
           interlocutorUsername={interlocutor.username}
           lastMessage={(conv.last_message || {}).text}
           unreadMessages={conv.unread_messages}
-          getConversation={fetch}
           setOpenDrawer={props.setOpenDrawer}
         />
       )
@@ -56,8 +50,13 @@ export default function Sidebar(props) {
   }
 
   return (
-    <Grid item xs={false} sm={false} md={3}>
-      <UserPanel username={props.userData.username} />
+    <Grid
+      item
+      xs={false}
+      sm={false}
+      md={3}
+    >
+      <UserPanel username={currentUser.username} />
       <UserSearch />
       <ConversationsContainer>
         {panels}

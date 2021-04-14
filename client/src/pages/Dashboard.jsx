@@ -7,8 +7,8 @@ import RootContainer from "../components/RootContainer";
 import Sidebar from "../components/dashboard/Sidebar";
 import ConversationHeader from "../components/dashboard/ConversationHeader";
 import ConversationContent from "../components/dashboard/ConversationContent";
-import { noUserData, selectUser, getUserData } from "../store/user";
-import { getConversations, selectConversations, selectActiveConversation, } from '../store/conversations';
+import { noUserData, getUserData } from "../store/user";
+import { getConversations, selectActiveConversation } from '../store/conversations';
 import { closeSnackbar } from "../utils";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,11 +20,9 @@ export default function Dashboard() {
   const history = useHistory();
   const dispatch = useDispatch();
   const noUser = useSelector(noUserData);
-  const userData = useSelector(selectUser);
   const handleClose = closeSnackbar(setOpenSnackbar);
   const getUser = getUserData(history, dispatch, {error: "/login"});
   const fetchConversations = getConversations(dispatch);
-  const conversations = useSelector(selectConversations);
   const activeConversation = useSelector(selectActiveConversation);
 
   React.useEffect(() => {
@@ -43,11 +41,7 @@ export default function Dashboard() {
   return (
     <RootContainer>
       <Hidden xsDown>
-        <Sidebar
-          userData={userData}
-          conversations={conversations}
-          setOpenDrawer={setOpenDrawer}
-        />
+        <Sidebar setOpenDrawer={setOpenDrawer}/>
       </Hidden>
       <Grid
         item
@@ -57,7 +51,7 @@ export default function Dashboard() {
       >
         <ConversationHeader toggleDrawer={toggleDrawer} />
         {Boolean(activeConversation.id) &&
-          <ConversationContent user={userData}/>
+          <ConversationContent />
         }
       </Grid>
       <ErrorSnackbar
@@ -70,11 +64,7 @@ export default function Dashboard() {
         open={openDrawer}
         onClose={toggleDrawer(false)}
       >
-        <Sidebar
-          userData={userData}
-          conversations={conversations}
-          setOpenDrawer={setOpenDrawer}
-        />
+        <Sidebar setOpenDrawer={setOpenDrawer} />
       </Drawer>
     </RootContainer>
   );
