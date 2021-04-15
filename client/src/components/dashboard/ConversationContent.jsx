@@ -3,8 +3,7 @@ import Box from "@material-ui/core/Box";
 import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import MessagesContainer from "./MessagesContainer";
-import IncomingMessage from "./IncomingMessage";
-import OutgoingMessage from "./OutgoingMessage";
+import Message from "./Message";
 import ConversationInput from "./ConversationInput";
 import { selectActiveConversation } from "../../store/conversations";
 import {selectUser} from "../../store/user";
@@ -33,24 +32,15 @@ export default function ConversationContent() {
     const date = new Date(message.created);
     const hours = date.getHours() > 9 ? `${date.getHours()}`: `0${date.getHours()}`;
     const minutes = date.getMinutes() > 9 ? `${date.getMinutes()}`: `0${date.getMinutes()}`;
-    if (currentUser.id === message.author_id) {
-      return (
-        <OutgoingMessage
-          key={message.id}
-          message={message.text}
-          time={`${hours}:${minutes}`}
-        />
-      )
-    } else {
-      return (
-        <IncomingMessage
-          key={message.id}
-          message={message.text}
-          name={message.author_username}
-          time={`${hours}:${minutes}`}
-        />
-      )
-    }
+    return (
+      <Message
+        key={message.id}
+        outgoing={currentUser.id === message.author_id}
+        message={message.text}
+        name={message.author_username}
+        time={`${hours}:${minutes}`}
+      />
+    )
   });
 
   return (
