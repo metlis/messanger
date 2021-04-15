@@ -93,9 +93,9 @@ export default function ConversationHeader(props) {
               color={props.isOnline ? "secondary" : "primary"}
               variant="dot"
             >
-              <p>
+              <Typography>
                 {props.isOnline ? "Online" : "Offline"}
-              </p>
+              </Typography>
             </Badge>
           </React.Fragment>
         }

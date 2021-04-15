@@ -1,5 +1,7 @@
 import React from "react";
 import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
 import Chip from "@material-ui/core/Chip";
 import StatusAvatar from "./StatusAvatar";
 import { makeStyles } from "@material-ui/core/styles";
@@ -14,10 +16,6 @@ import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles(theme => ({
   contactContainer: {
-    display: "flex",
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "space-between",
     cursor: 'pointer',
     maxWidth: "100%",
     marginTop: 28,
@@ -93,17 +91,23 @@ export default function ContactPanel(props) {
   }
 
   return (
-    <Box className={classes.contactContainer} onClick={handleConversationChoice}>
+    <Grid
+      container
+      alignItems="center"
+      justify="space-between"
+      className={classes.contactContainer}
+      onClick={handleConversationChoice}
+    >
       <Box className={classes.contactAvatarContainer}>
       <StatusAvatar username={props.interlocutorUsername} />
-        <p>
+        <Typography>
           <span className={classes.username}>
             {props.interlocutorUsername}
           </span><br />
           <span className={`${classes.lastMessage} ${!Boolean(props.unreadMessages) ? classes.lastMessageRead: ''}`}>
             {props.lastMessage}
           </span>
-        </p>
+        </Typography>
       </Box>
       {Boolean(props.unreadMessages) &&
         <Chip
@@ -113,6 +117,6 @@ export default function ContactPanel(props) {
           color="default"
         />
       }
-    </Box>
+    </Grid>
   )
 }

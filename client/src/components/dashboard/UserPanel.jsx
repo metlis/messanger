@@ -6,6 +6,7 @@ import StatusAvatar from "./StatusAvatar";
 import {makeStyles} from "@material-ui/core/styles";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Typography from "@material-ui/core/Typography";
 import { logoutUser } from "../../store/user";
 import { clearConversations } from "../../store/conversations";
 import { clearSearch } from "../../store/search";
@@ -40,6 +41,7 @@ const useStyles = makeStyles(theme => ({
       overflow: "hidden",
       maxWidth: "100%",
       whiteSpace: "nowrap",
+      fontSize: 16
     }
   },
   icon: {
@@ -77,7 +79,7 @@ export default function UserPanel(props) {
     <Box className={classes.userPanel}>
       <Box className={classes.avatarContainer}>
         <StatusAvatar username={props.username} />
-        <p>{props.username}</p>
+        <Typography>{props.username}</Typography>
       </Box>
       <Button
         className={classes.button}
