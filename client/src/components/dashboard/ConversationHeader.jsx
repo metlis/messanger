@@ -78,7 +78,7 @@ export default function ConversationHeader(props) {
             <MenuIcon />
           </IconButton>
         </Hidden>
-        {Boolean(conversation.username) &&
+        {conversation.username &&
           <React.Fragment>
             <Typography
               className={classes.userHeader}
