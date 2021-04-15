@@ -12,7 +12,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { selectActiveConversation } from "../../store/conversations";
 
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   conversationHeader: {
     height: 80,
     borderRadius: 5,

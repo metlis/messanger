@@ -12,7 +12,7 @@ import {
 import { useDispatch } from "react-redux";
 
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   contactContainer: {
     display: "flex",
     alignSelf: "center",

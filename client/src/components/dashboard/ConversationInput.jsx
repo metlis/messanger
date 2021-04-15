@@ -9,7 +9,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { createMessage, selectActiveConversation, setConversation, getConversations } from "../../store/conversations";
 
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   container: {
     minHeight: 100
   },

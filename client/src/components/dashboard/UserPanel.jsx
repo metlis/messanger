@@ -13,7 +13,7 @@ import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   userPanel: {
     display: "flex",
     alignSelf: "center",

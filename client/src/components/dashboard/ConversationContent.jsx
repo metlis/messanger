@@ -10,7 +10,7 @@ import { selectActiveConversation } from "../../store/conversations";
 import {selectUser} from "../../store/user";
 
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   container: {
     padding: 30
   },

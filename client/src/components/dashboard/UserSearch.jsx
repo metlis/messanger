@@ -9,7 +9,7 @@ import { searchUsers, clearSearch } from "../../store/search";
 import { useDispatch } from "react-redux";
 
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   container: {
     width: 'auto',
     marginLeft: 25,
