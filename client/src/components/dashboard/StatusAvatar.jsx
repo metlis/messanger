@@ -11,13 +11,13 @@ const useStyles = makeStyles(theme => ({
   },
   badge: {
     '& .MuiBadge-anchorOriginBottomRightRectangle': {
-      right: 10,
-      bottom: 5
+      right: 6,
+      bottom: 9
     },
     '& .MuiBadge-dot': {
-      height: 12,
-      minWidth: 12,
-      borderRadius: 6,
+      height: 14,
+      minWidth: 14,
+      borderRadius: 7,
       border: '2px solid white'
     }
   },

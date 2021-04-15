@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   },
   interlocutorStatusBadge: {
     '& .MuiBadge-anchorOriginBottomLeftRectangle': {
-      bottom: 20,
+      bottom: 10,
       height: 7,
       minWidth: 7,
       borderRadius: 4,
