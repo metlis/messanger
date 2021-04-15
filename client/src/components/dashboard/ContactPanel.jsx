@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 10,
     maxWidth: "calc(100% - 20px)",
     '& p': {
-      margin: '5px 0px 0px',
+      margin: '5px 0px 0px'
     }
   },
   username: {
@@ -44,6 +44,7 @@ const useStyles = makeStyles(theme => ({
     maxWidth: "100%",
     whiteSpace: "nowrap",
     position: 'relative',
+    fontSize: 15
   },
   lastMessage: {
     position: 'relative',
@@ -94,6 +95,7 @@ export default function ContactPanel(props) {
     <Grid
       container
       alignItems="center"
+      alignContent="center"
       justify="space-between"
       className={classes.contactContainer}
       onClick={handleConversationChoice}

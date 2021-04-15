@@ -14,7 +14,8 @@ const useStyles = makeStyles(theme => ({
     marginTop: 49,
     fontSize: 16,
     backgroundColor: "#3a8dff",
-    fontWeight: "bold"
+    fontWeight: "bold",
+    color: "white"
   },
 }));
 
@@ -27,7 +28,7 @@ export default function ActionButton(props) {
         type="submit"
         size="large"
         variant="contained"
-        color="primary"
+        color="default"
         className={classes.submit}
       >
         {props.text}
