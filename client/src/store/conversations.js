@@ -16,6 +16,9 @@ export const conversationsSlice = createSlice({
     updateActiveConversation: (state, action) => {
       state.active = action.payload;
     },
+    addConversation: (state, action) => {
+      state.list.push(action.payload);
+    },
     clearConversations: (state) => {
       state.list = [];
       state.active = {};
@@ -26,7 +29,8 @@ export const conversationsSlice = createSlice({
 export const {
   updateConversationsList,
   updateActiveConversation,
-  clearConversations
+  clearConversations,
+  addConversation
 } = conversationsSlice.actions;
 
 export const selectConversations = ({conversations}) => conversations.list;
@@ -34,13 +38,13 @@ export const selectActiveConversation = ({conversations}) => conversations.activ
 
 export const createConversation = () => async (interlocutor_id) => {
   try {
-    await axios({
+    const res = await axios({
       method: 'post',
       url: '/conversations',
       withCredentials: true,
       data: {interlocutor_id},
     })
-    return null;
+    return res.data;
   } catch (err) {
     return err.response.data;
     }
@@ -54,7 +58,7 @@ export const getConversations = (dispatch) => async () => {
       withCredentials: true,
     })
     dispatch(updateConversationsList(res.data));
-    return null;
+    return res.data;
   } catch (err) {
     return err.response.data;
     }
@@ -81,13 +85,13 @@ export const setConversation = (dispatch) => async (id, username) => {
 
 export const createMessage = () => async (id, text) => {
   try {
-    await axios({
+    const res = await axios({
       method: 'post',
       url: `/conversations/${id}/messages`,
       withCredentials: true,
       data: {text},
     })
-    return null;
+    return res.data;
   } catch (err) {
     return err.response.data;
     }
@@ -106,12 +110,10 @@ export const markMessagesRead = async (id) => {
     }
 };
 
-export const getNewConversationId = (interlocutorId) => async (dispatch, getState) => {
-  await createConversation()(interlocutorId);
-  await getConversations(dispatch)();
-  const conversations = selectConversations(getState());
-  const conversation = conversations.find(conv => conv.users.some(user => user.id === interlocutorId));
-  return (conversation || {}).id
+export const getNewConversationId = (interlocutorId) => async (dispatch) => {
+  const conversation = await createConversation()(interlocutorId);
+  dispatch(addConversation(conversation));
+  return conversation.id
 };
 
 export default conversationsSlice.reducer;

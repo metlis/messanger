@@ -59,7 +59,7 @@ export default function UserSearch() {
   const textInput = React.useRef();
 
   const processSearchQuery = async (event) => {
-    if (event.key === 'Backspace' && event.target.value === '') {
+    if (event.target.value === '') {
       dispatch(clearSearch());
     } else {
       await search(event.target.value);

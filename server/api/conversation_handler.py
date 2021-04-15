@@ -34,7 +34,7 @@ def conversations():
         conversation.users.extend([interlocutor, current_user])
         db.session.add(conversation)
         db.session.commit()
-        return '', 201
+        return jsonify(conversation.get_conversation_data(current_user.id)), 201
 
 
 @conversation_handler.route('/conversations/<int:conversation_id>/messages',
@@ -57,7 +57,7 @@ def messages(conversation_id):
         message = Message(conversation_id=conversation.id, author_id=current_user.id, text=text)
         db.session.add(message)
         db.session.commit()
-        return '', 201
+        return jsonify(message.get_message_data()), 201
 
 
 @conversation_handler.route('/conversations/<int:conversation_id>/messages/<int:message_id>/mark_as_read',
