@@ -22,6 +22,21 @@ export const conversationsSlice = createSlice({
     clearConversations: (state) => {
       state.list = [];
       state.active = {};
+    },
+    addMessages: (state, action) => {
+      const conversation = state.list.find(i => i.id === action.payload.id);
+      if (conversation) {
+        conversation.messages = action.payload.messages;
+        conversation.username = action.payload.username;
+      }
+    },
+    addMessage: (state, action) => {
+      state.active.messages.push(action.payload);
+      const conversation = state.list.find(i => i.id === state.active.id);
+      if (conversation) {
+        conversation.messages = state.active.messages;
+        conversation.last_message = action.payload;
+      }
     }
   },
 });
@@ -30,7 +45,9 @@ export const {
   updateConversationsList,
   updateActiveConversation,
   clearConversations,
-  addConversation
+  addConversation,
+  addMessages,
+  addMessage
 } = conversationsSlice.actions;
 
 export const selectConversations = ({conversations}) => conversations.list;
@@ -64,26 +81,31 @@ export const getConversations = (dispatch) => async () => {
     }
 };
 
-export const setConversation = (dispatch) => async (id, username) => {
-  try {
-    const res = await axios({
-      method: 'get',
-      url: `/conversations/${id}/messages`,
-      withCredentials: true,
-    })
-    const payload = {
-      id,
-      username,
-      messages: res.data,
-    }
-    dispatch(updateActiveConversation(payload));
-    return null;
-  } catch (err) {
-    return err.response.data;
-    }
+export const setConversation = (dispatch) => async (id, username, conversations) => {
+  const conversation = conversations.find(i => i.id === id) || {};
+  if (conversation.messages) {
+    dispatch(updateActiveConversation(conversation));
+  } else {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `/conversations/${id}/messages`,
+        withCredentials: true,
+      })
+      const payload = {
+        ...conversation,
+        username,
+        messages: res.data,
+      }
+      dispatch(updateActiveConversation(payload));
+      dispatch(addMessages(payload));
+    } catch (err) {
+      return err.response.data;
+      }
+  }
 };
 
-export const createMessage = () => async (id, text) => {
+export const createMessage = (dispatch) => async (id, text) => {
   try {
     const res = await axios({
       method: 'post',
@@ -91,6 +113,7 @@ export const createMessage = () => async (id, text) => {
       withCredentials: true,
       data: {text},
     })
+    dispatch(addMessage(res.data));
     return res.data;
   } catch (err) {
     return err.response.data;
@@ -110,10 +133,11 @@ export const markMessagesRead = async (id) => {
     }
 };
 
-export const getNewConversationId = (interlocutorId) => async (dispatch) => {
+export const getNewConversationId = (interlocutorId) => async (dispatch, getState) => {
   const conversation = await createConversation()(interlocutorId);
   dispatch(addConversation(conversation));
-  return conversation.id
+  const conversations = selectConversations(getState());
+  return [conversations, conversation.id]
 };
 
 export default conversationsSlice.reducer;

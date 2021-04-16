@@ -9,9 +9,10 @@ import {
   markMessagesRead,
   setConversation,
   getConversations,
-  getNewConversationId
+  getNewConversationId,
+  selectConversations
 } from "../../store/conversations";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector} from "react-redux";
 
 
 const useStyles = makeStyles(theme => ({
@@ -72,16 +73,17 @@ const useStyles = makeStyles(theme => ({
 export default function ContactPanel(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  let conversations = useSelector(selectConversations);
   const setActiveConversation = setConversation(dispatch);
   const getConversationsList = getConversations(dispatch);
 
   const handleConversationChoice = async () => {
     let conversationId = props.conversationId;
     if (!conversationId) {
-      conversationId = await dispatch(getNewConversationId(props.interlocutorId));
+      [conversations, conversationId] = await dispatch(getNewConversationId(props.interlocutorId));
     }
 
-    await setActiveConversation(conversationId, props.interlocutorUsername);
+    await setActiveConversation(conversationId, props.interlocutorUsername, conversations);
 
     if (props.unreadMessages > 0) {
       await markMessagesRead(conversationId);

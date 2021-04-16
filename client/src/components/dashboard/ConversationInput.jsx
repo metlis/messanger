@@ -6,7 +6,7 @@ import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
 import FileCopyOutlinedIcon from "@material-ui/icons/FileCopyOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { createMessage, selectActiveConversation, setConversation, getConversations } from "../../store/conversations";
+import { createMessage, selectActiveConversation } from "../../store/conversations";
 
 
 const useStyles = makeStyles(theme => ({
@@ -53,19 +53,15 @@ export default function ConversationInput(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const conversation = useSelector(selectActiveConversation);
-  const createNewMessage = createMessage();
-  const updateConversation = setConversation(dispatch);
-  const updateConversationsList = getConversations(dispatch);
+  const createNewMessage = createMessage(dispatch);
   const textInput = React.useRef();
 
   const addMessage = async (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
       await createNewMessage(conversation.id, event.target.value);
-      await updateConversation(conversation.id, conversation.username);
       textInput.current.value = "";
       props.scrollDown();
-      await updateConversationsList();
     }
   }
 
