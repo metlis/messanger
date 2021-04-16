@@ -7,19 +7,19 @@ import Sidebar from "../components/authentication/Sidebar";
 import TopButtons from "../components/authentication/TopButtons";
 import ErrorSnackbar from "../components/ErrorSnackbar";
 import LoginForm from "../components/authentication/LoginForm";
-import RootContainer from "../components/authentication/RootContainer";
+import RootContainer from "../components/RootContainer";
 import ContentContainer from "../components/authentication/ContentContainer";
 import { noUserData, loginUser } from "../store/user";
 import { closeSnackbar } from "../utils";
 
 
 export default function Login() {
-  const [open, setOpen] = React.useState(false);
+  const [openSnackbar, setOpenSnackbar] = React.useState(false);
   const history = useHistory();
   const dispatch = useDispatch();
   const noUser = useSelector(noUserData);
   const login = loginUser(history, dispatch, {success: "/dashboard"});
-  const handleClose = closeSnackbar(setOpen);
+  const handleSnackbarClose = closeSnackbar(setOpenSnackbar);
 
   React.useEffect(() => {
     if (!noUser) history.push("/dashboard");
@@ -31,12 +31,12 @@ export default function Login() {
       <Sidebar />
       <ContentContainer>
         <TopButtons page="login" />
-        <LoginForm login={login} setOpen={setOpen} />
+        <LoginForm login={login} setOpen={setOpenSnackbar} />
         <Box p={1} alignSelf="center" />
       </ContentContainer>
       <ErrorSnackbar
-        open={open}
-        handleClose={handleClose}
+        open={openSnackbar}
+        handleClose={handleSnackbarClose}
         message="Login failed"
       />
     </RootContainer>

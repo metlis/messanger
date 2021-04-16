@@ -14,7 +14,8 @@ def search_users():
     if not query:
         return 'Query string is required', 400
 
-    users = User.query.filter(func.lower(User.username).contains(query)).all()
+    users = User.query.filter(User.id != current_user.id,
+                              func.lower(User.username).contains(query)).all()
     users = [user.get_user_data() for user in users]
     return jsonify(users), 200
 

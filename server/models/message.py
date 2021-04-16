@@ -21,6 +21,7 @@ class Message(db.Model):
             'id': self.id,
             'created': self.created,
             'author_id': self.author_id,
+            'author_username': self.author.username,
             'is_read': self.is_read,
             'text': self.text,
         }

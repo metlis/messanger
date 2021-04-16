@@ -8,19 +8,19 @@ import TopButtons from "../components/authentication/TopButtons";
 import ErrorSnackbar from "../components/ErrorSnackbar";
 import SignUpForm from "../components/authentication/SignUpForm";
 import ContentContainer from "../components/authentication/ContentContainer";
-import RootContainer from "../components/authentication/RootContainer";
+import RootContainer from "../components/RootContainer";
 import { noUserData, registerUser } from "../store/user";
 import { closeSnackbar } from "../utils";
 
 
 export default function Register() {
-  const [open, setOpen] = React.useState(false);
+  const [openSnackbar, setOpenSnackbar] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('Registration error');
   const history = useHistory();
   const dispatch = useDispatch();
   const noUser = useSelector(noUserData);
   const register = registerUser(history, dispatch,{success: "/dashboard"});
-  const handleClose = closeSnackbar(setOpen);
+  const handleClose = closeSnackbar(setOpenSnackbar);
 
   React.useEffect(() => {
     if (!noUser) history.push("/dashboard");
@@ -35,12 +35,12 @@ export default function Register() {
         <SignUpForm
           register={register}
           setErrorMessage={setErrorMessage}
-          setOpen={setOpen}
+          setOpen={setOpenSnackbar}
         />
         <Box p={1} alignSelf="center" />
       </ContentContainer>
       <ErrorSnackbar
-        open={open}
+        open={openSnackbar}
         handleClose={handleClose}
         message={errorMessage}
       />

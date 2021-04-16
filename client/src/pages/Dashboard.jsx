@@ -1,45 +1,78 @@
 import React from "react";
+import Grid from "@material-ui/core/Grid";
+import Hidden from "@material-ui/core/Hidden";
+import Drawer from '@material-ui/core/Drawer';
+import ErrorSnackbar from "../components/ErrorSnackbar";
+import RootContainer from "../components/RootContainer";
+import Sidebar from "../components/dashboard/Sidebar";
+import ConversationHeader from "../components/dashboard/ConversationHeader";
+import ConversationContent from "../components/dashboard/ConversationContent";
+import MessagePlaceholder from "../components/dashboard/MessagePlaceholder";
+import { noUserData, getUserData } from "../store/user";
+import { getConversations, selectActiveConversation } from '../store/conversations';
+import { closeSnackbar } from "../utils";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import ErrorSnackbar from "../components/ErrorSnackbar";
-import { noUserData, selectUser, logoutUser, getUserData } from "../store/user";
-import { closeSnackbar } from "../utils";
 
 
 export default function Dashboard() {
-  const [open, setOpen] = React.useState(false);
+  const [openSnackbar, setOpenSnackbar] = React.useState(false);
+  const [openDrawer, setOpenDrawer] = React.useState(false);
   const history = useHistory();
   const dispatch = useDispatch();
   const noUser = useSelector(noUserData);
-  const handleClose = closeSnackbar(setOpen);
-  const logout = logoutUser(history, dispatch, {success: "/login"});
+  const handleClose = closeSnackbar(setOpenSnackbar);
   const getUser = getUserData(history, dispatch, {error: "/login"});
+  const fetchConversations = getConversations(dispatch);
+  const activeConversation = useSelector(selectActiveConversation);
 
   React.useEffect(() => {
     (async () => {
-      if (noUser) await getUser();
+      if (noUser) {
+        await getUser();
+        await fetchConversations();
+      }
     })();
   });
 
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setOpenDrawer(open);
+  };
+
   return (
-    <>
-      {/* For testing purposes right now, ignore styling */}
-      <p>Dashboard</p>
-      <p>User: {JSON.stringify(useSelector(selectUser))}</p>
-      <button
-        onClick={
-          async () => {
-            const logout_error = await logout();
-            if (logout_error) setOpen(true);
-        }}
+    <RootContainer>
+      <Hidden xsDown>
+        <Sidebar setOpenDrawer={setOpenDrawer}/>
+      </Hidden>
+      <Grid
+        item
+        xs={12}
+        sm={12}
+        md={9}
       >
-        Logout
-      </button>
+        <ConversationHeader toggleDrawer={toggleDrawer} />
+        {Boolean(activeConversation.id) &&
+          <ConversationContent />
+        }
+        {!Boolean(activeConversation.id) &&
+          <MessagePlaceholder />
+        }
+      </Grid>
       <ErrorSnackbar
-        open={open}
+        open={openSnackbar}
         handleClose={handleClose}
         message="Logout failed"
       />
-    </>
+      <Drawer
+        anchor="left"
+        open={openDrawer}
+        onClose={toggleDrawer(false)}
+      >
+        <Sidebar setOpenDrawer={setOpenDrawer} />
+      </Drawer>
+    </RootContainer>
   );
 }

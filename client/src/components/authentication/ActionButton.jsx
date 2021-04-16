@@ -4,7 +4,7 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   submit: {
     margin: '24px 16px 16px',
     padding: 10,
@@ -14,7 +14,8 @@ const useStyles = makeStyles(() => ({
     marginTop: 49,
     fontSize: 16,
     backgroundColor: "#3a8dff",
-    fontWeight: "bold"
+    fontWeight: "bold",
+    color: "white"
   },
 }));
 
@@ -27,7 +28,7 @@ export default function ActionButton(props) {
         type="submit"
         size="large"
         variant="contained"
-        color="primary"
+        color="default"
         className={classes.submit}
       >
         {props.text}

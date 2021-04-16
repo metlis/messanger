@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   heroText: {
     fontSize: 26,
     fontFamily: "Open Sans",
