@@ -40,4 +40,8 @@ class User(db.Model, UserMixin):
         return {
             'id': self.id,
             'username': self.username,
+            'active': self.id in active_users
         }
+
+
+active_users = {}

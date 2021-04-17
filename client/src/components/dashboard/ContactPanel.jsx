@@ -103,7 +103,7 @@ export default function ContactPanel(props) {
       onClick={handleConversationChoice}
     >
       <Box className={classes.contactAvatarContainer}>
-      <StatusAvatar username={props.interlocutorUsername} />
+      <StatusAvatar username={props.interlocutorUsername} active={props.active} />
         <Typography>
           <span className={classes.username}>
             {props.interlocutorUsername}

@@ -19,7 +19,8 @@ class Conversation(db.Model):
             'id': self.id,
             'last_message': last_message,
             'users': [user.get_user_data() for user in self.users],
-            'unread_messages': self.messages.filter(Message.is_read == False, Message.author_id != user_id).count()
+            'unread_messages': self.messages.filter(Message.is_read == False, Message.author_id != user_id).count(),
+            'total_messages': self.messages.count()
         }
 
     def get_conversation_messages(self):

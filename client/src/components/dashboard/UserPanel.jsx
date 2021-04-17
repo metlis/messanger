@@ -78,7 +78,7 @@ export default function UserPanel(props) {
   return (
     <Box className={classes.userPanel}>
       <Box className={classes.avatarContainer}>
-        <StatusAvatar username={props.username} />
+        <StatusAvatar username={props.username} active={true} />
         <Typography>{props.username}</Typography>
       </Box>
       <Button

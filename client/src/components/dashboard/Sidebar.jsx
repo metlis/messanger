@@ -21,7 +21,7 @@ export default function Sidebar(props) {
   if (searchQuery) {
     panels = foundUsers.map(user => {
       let conversationId = null;
-      const conversation = conversations.find(conv => conv.users.some(convUser => convUser.id === user.id));
+      const conversation = conversations.find(conv => (conv.users || []).some(convUser => convUser.id === user.id));
       if (conversation) conversationId = conversation.id;
       return (
         <ContactPanel
@@ -34,7 +34,7 @@ export default function Sidebar(props) {
       )
     });
   } else {
-    panels = conversations.map(conv => {
+    panels = conversations.filter(i => i.total_messages > 0).map(conv => {
       const interlocutor = (conv.users || []).find(user => user.id !== currentUser.id);
       return (
         <ContactPanel
@@ -45,6 +45,7 @@ export default function Sidebar(props) {
           lastMessage={(conv.last_message || {}).text}
           unreadMessages={conv.unread_messages}
           setOpenDrawer={props.setOpenDrawer}
+          active={interlocutor.active}
         />
       )
     });
