@@ -162,6 +162,11 @@ export const getNewConversationId = (interlocutorId) => async (dispatch, getStat
 
 export const startListener = () => (dispatch, getState) => {
   socket.on("message_created", arg => {
+    const payload = JSON.parse(arg);
+    const activeConversation = selectActiveConversation(getState());
+    if (activeConversation.username === payload.message.author_username) {
+      markMessagesRead(dispatch)(payload.conversation);
+    }
     dispatch(addMessage(JSON.parse(arg)));
   })
   socket.on("conversation_created", arg => {
