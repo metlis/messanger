@@ -44,9 +44,9 @@ export const conversationsSlice = createSlice({
         if (!conversation.messages) conversation.messages = [];
         conversation.messages.push(action.payload.message);
         conversation.last_message = action.payload.message;
+        conversation.total_messages += 1;
         if (!toActive) {
           conversation.unread_messages += 1;
-          conversation.total_messages += 1;
         }
       }
     },
