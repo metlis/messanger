@@ -11,7 +11,6 @@ from models.user import User, active_users
 from api.auth_handler import auth_handler
 from api.users_handler import users_handler
 
-
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -29,8 +28,8 @@ socketio = SocketIO(app,
                     logger=True,
                     manage_session=False)
 
-
 from api.conversation_handler import conversation_handler
+
 app.register_blueprint(auth_handler)
 app.register_blueprint(conversation_handler)
 app.register_blueprint(users_handler)
@@ -47,16 +46,26 @@ def get_user(user_id):
 @socketio.on('connect')
 def connect():
     if current_user.is_authenticated:
-        active_users[current_user.id] = request.sid
+        if current_user.id not in active_users:
+            active_users[current_user.id] = []
+        if request.sid not in active_users[current_user.id]:
+            active_users[current_user.id].append(request.sid)
         for conversation in current_user.conversations:
             join_room(conversation.id)
-            emit('user_logged_in', {'id': current_user.id}, to=conversation.id)
+            if len(active_users[current_user.id]) == 1:
+                emit('user_logged_in', {'id': current_user.id}, to=conversation.id)
 
 
 @socketio.on('disconnect')
 def disconnect():
-    if current_user.is_authenticated and current_user.id in active_users:
-        active_users.pop(current_user.id)
+    if (current_user.is_authenticated
+            and current_user.id in active_users
+            and request.sid in active_users[current_user.id]):
+        active_users[current_user.id].remove(request.sid)
+        no_user_sessions = len(active_users[current_user.id]) == 0
         for conversation in current_user.conversations:
             leave_room(conversation.id)
-            emit('user_logged_out', {'id': current_user.id}, to=conversation.id)
+            if no_user_sessions:
+                emit('user_logged_out', {'id': current_user.id}, to=conversation.id)
+        if no_user_sessions:
+            active_users.pop(current_user.id)
