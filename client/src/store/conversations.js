@@ -4,7 +4,7 @@ import socket from "../socket";
 
 const initialState = {
   list: [],
-  active: {},
+  active: null,
 };
 
 export const conversationsSlice = createSlice({
@@ -22,7 +22,7 @@ export const conversationsSlice = createSlice({
     },
     clearConversations: (state) => {
       state.list = [];
-      state.active = {};
+      state.active = null;
     },
     addMessages: (state, action) => {
       const conversation = state.list.find(i => i.id === action.payload.id);
@@ -31,15 +31,18 @@ export const conversationsSlice = createSlice({
         conversation.username = action.payload.username;
       }
     },
+    readMessages: (state, action) => {
+      const conversation = state.list.find(i => i.id === action.payload);
+      if (conversation) {
+        conversation.unread_messages = 0;
+      }
+    },
     addMessage: (state, action) => {
-      const toActive = state.active.id === action.payload.conversation;
-      if (toActive) state.active.messages.push(action.payload.message);
-
+      const toActive = state.active === action.payload.conversation;
       const conversation = state.list.find(i => i.id === action.payload.conversation);
       if (conversation) {
-        if (conversation.messages) {
-          conversation.messages.push(action.payload.message);
-        }
+        if (!conversation.messages) conversation.messages = [];
+        conversation.messages.push(action.payload.message);
         conversation.last_message = action.payload.message;
         if (!toActive) {
           conversation.unread_messages += 1;
@@ -54,10 +57,6 @@ export const conversationsSlice = createSlice({
           user.active = action.payload.active;
         }
       })
-      const user = (state.active.users || []).find(i => i.id === action.payload.id);
-      if (user) {
-        user.active = action.payload.active;
-      }
     }
   },
 });
@@ -69,11 +68,12 @@ export const {
   addConversation,
   addMessages,
   addMessage,
-  updateUserStatus
+  updateUserStatus,
+  readMessages
 } = conversationsSlice.actions;
 
 export const selectConversations = ({conversations}) => conversations.list;
-export const selectActiveConversation = ({conversations}) => conversations.active;
+export const selectActiveConversation = ({conversations}) => conversations.list.find(i => i.id === conversations.active) || {};
 
 export const createConversation = () => async (interlocutor_id) => {
   try {
@@ -105,9 +105,8 @@ export const getConversations = (dispatch) => async () => {
 
 export const setConversation = (dispatch) => async (id, username, conversations) => {
   const conversation = conversations.find(i => i.id === id) || {};
-  if (conversation.messages) {
-    dispatch(updateActiveConversation(conversation));
-  } else {
+  dispatch(updateActiveConversation(id));
+  if (!conversation.messages) {
     try {
       const res = await axios({
         method: 'get',
@@ -119,7 +118,6 @@ export const setConversation = (dispatch) => async (id, username, conversations)
         username,
         messages: res.data,
       }
-      dispatch(updateActiveConversation(payload));
       dispatch(addMessages(payload));
     } catch (err) {
       return err.response.data;
@@ -141,13 +139,14 @@ export const createMessage = (dispatch) => async (id, text) => {
     }
 };
 
-export const markMessagesRead = async (id) => {
+export const markMessagesRead = (dispatch) => async (id) => {
   try {
     await axios({
       method: 'post',
       url: `/conversations/${id}/messages/mark_as_read`,
       withCredentials: true,
     })
+    dispatch(readMessages(id))
     return null;
   } catch (err) {
     return err.response.data;

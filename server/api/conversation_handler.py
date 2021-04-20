@@ -37,13 +37,18 @@ def conversations():
         conversation.users.extend([interlocutor, current_user])
         db.session.add(conversation)
         db.session.commit()
+
         if interlocutor_id in active_users:
-            socketio.emit(
-                'conversation_created',
-                json.dumps(conversation.get_conversation_data(interlocutor_id)),
-                to=active_users[interlocutor_id]
-            )
-            socketio.server.enter_room(active_users[interlocutor_id], conversation.id)
+            for session in active_users[interlocutor_id]:
+                socketio.emit(
+                    'conversation_created',
+                    json.dumps(conversation.get_conversation_data(interlocutor_id)),
+                    to=session
+                )
+                socketio.server.enter_room(session, conversation.id)
+        for session in active_users[current_user.id]:
+            socketio.server.enter_room(session, conversation.id)
+
         return jsonify(conversation.get_conversation_data(current_user.id)), 201
 
 
