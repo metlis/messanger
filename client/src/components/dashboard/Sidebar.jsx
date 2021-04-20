@@ -30,6 +30,7 @@ export default function Sidebar(props) {
           interlocutorId={user.id}
           interlocutorUsername={user.username}
           setOpenDrawer={props.setOpenDrawer}
+          active={user.active}
         />
       )
     });
