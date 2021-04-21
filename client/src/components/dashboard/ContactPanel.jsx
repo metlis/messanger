@@ -8,7 +8,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   markMessagesRead,
   setConversation,
-  getConversations,
   getNewConversationId,
   selectConversations
 } from "../../store/conversations";
@@ -75,7 +74,7 @@ export default function ContactPanel(props) {
   const dispatch = useDispatch();
   let conversations = useSelector(selectConversations);
   const setActiveConversation = setConversation(dispatch);
-  const getConversationsList = getConversations(dispatch);
+  const readMessages = markMessagesRead(dispatch);
 
   const handleConversationChoice = async () => {
     let conversationId = props.conversationId;
@@ -86,8 +85,7 @@ export default function ContactPanel(props) {
     await setActiveConversation(conversationId, props.interlocutorUsername, conversations);
 
     if (props.unreadMessages > 0) {
-      await markMessagesRead(conversationId);
-      await getConversationsList();
+      await readMessages(conversationId);
     }
 
     props.setOpenDrawer(false);
@@ -103,7 +101,7 @@ export default function ContactPanel(props) {
       onClick={handleConversationChoice}
     >
       <Box className={classes.contactAvatarContainer}>
-      <StatusAvatar username={props.interlocutorUsername} />
+      <StatusAvatar username={props.interlocutorUsername} active={props.active} />
         <Typography>
           <span className={classes.username}>
             {props.interlocutorUsername}

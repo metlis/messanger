@@ -8,8 +8,14 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 
 import "./App.css";
+import {startListener} from "./store/conversations";
+import {useDispatch} from "react-redux";
 
 function App() {
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    dispatch(startListener());
+  });
   return (
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>

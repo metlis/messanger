@@ -90,11 +90,11 @@ export default function ConversationHeader(props) {
             <Badge
               className={classes.interlocutorStatusBadge}
               anchorOrigin={{vertical: "bottom", horizontal: "left"}}
-              color={props.isOnline ? "secondary" : "primary"}
+              color={props.active ? "secondary" : "primary"}
               variant="dot"
             >
               <Typography>
-                {props.isOnline ? "Online" : "Offline"}
+                {props.active ? "Online" : "Offline"}
               </Typography>
             </Badge>
           </React.Fragment>

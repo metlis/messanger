@@ -1,3 +1,5 @@
+import json
+
 from flask import jsonify, request, Blueprint
 from flask_login import login_required, current_user
 
@@ -5,6 +7,7 @@ from models import db
 from models.user import User
 from models.conversation import Conversation
 from models.message import Message
+from app import socketio, active_users
 
 conversation_handler = Blueprint('conversation_handler', __name__)
 
@@ -34,6 +37,18 @@ def conversations():
         conversation.users.extend([interlocutor, current_user])
         db.session.add(conversation)
         db.session.commit()
+
+        if interlocutor_id in active_users:
+            for session in active_users[interlocutor_id]:
+                socketio.emit(
+                    'conversation_created',
+                    json.dumps(conversation.get_conversation_data(interlocutor_id)),
+                    to=session
+                )
+                socketio.server.enter_room(session, conversation.id)
+        for session in active_users[current_user.id]:
+            socketio.server.enter_room(session, conversation.id)
+
         return jsonify(conversation.get_conversation_data(current_user.id)), 201
 
 
@@ -57,6 +72,14 @@ def messages(conversation_id):
         message = Message(conversation_id=conversation.id, author_id=current_user.id, text=text)
         db.session.add(message)
         db.session.commit()
+        socketio.emit(
+            'message_created',
+            json.dumps({
+                'conversation': conversation.id,
+                'message': message.get_message_data()
+            }),
+            to=message.conversation_id
+        )
         return jsonify(message.get_message_data()), 201
 
 

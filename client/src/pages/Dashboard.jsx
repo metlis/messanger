@@ -8,7 +8,7 @@ import Sidebar from "../components/dashboard/Sidebar";
 import ConversationHeader from "../components/dashboard/ConversationHeader";
 import ConversationContent from "../components/dashboard/ConversationContent";
 import MessagePlaceholder from "../components/dashboard/MessagePlaceholder";
-import { noUserData, getUserData } from "../store/user";
+import { noUserData, getUserData, selectUser } from "../store/user";
 import { getConversations, selectActiveConversation } from '../store/conversations';
 import { closeSnackbar } from "../utils";
 import { useHistory } from "react-router-dom";
@@ -21,6 +21,7 @@ export default function Dashboard() {
   const history = useHistory();
   const dispatch = useDispatch();
   const noUser = useSelector(noUserData);
+  const currentUser = useSelector(selectUser);
   const handleClose = closeSnackbar(setOpenSnackbar);
   const getUser = getUserData(history, dispatch, {error: "/login"});
   const fetchConversations = getConversations(dispatch);
@@ -42,6 +43,8 @@ export default function Dashboard() {
     setOpenDrawer(open);
   };
 
+  const interlocutor = (activeConversation.users || []).find(i => i.id !== currentUser.id) || {};
+
   return (
     <RootContainer>
       <Hidden xsDown>
@@ -53,7 +56,7 @@ export default function Dashboard() {
         sm={12}
         md={9}
       >
-        <ConversationHeader toggleDrawer={toggleDrawer} />
+        <ConversationHeader active={interlocutor.active} toggleDrawer={toggleDrawer} />
         {Boolean(activeConversation.id) &&
           <ConversationContent />
         }

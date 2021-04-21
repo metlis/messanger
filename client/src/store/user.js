@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from "axios";
 import {getConversations} from "./conversations";
+import socket from "../socket";
 
 const initialState = {
   userData: {},
@@ -33,6 +34,7 @@ export const loginUser = (history, dispatch, nextPage={}) => async (email, passw
       withCredentials: true,
     })
     dispatch(update(res.data));
+    socket.connect();
     await getConversations(dispatch)();
     if (nextPage.success) history.push(nextPage.success);
     return null;
@@ -52,6 +54,7 @@ export const registerUser = (history, dispatch, nextPage={}) => async (username,
     });
     dispatch(update(res.data));
     if (nextPage.success) history.push(nextPage.success);
+    socket.connect();
     return null;
   } catch (err) {
     if (nextPage.error) history.push(nextPage.error);
@@ -61,6 +64,7 @@ export const registerUser = (history, dispatch, nextPage={}) => async (username,
 
 export const logoutUser = (history, dispatch, nextPage={}) => async () => {
   try {
+    socket.disconnect();
     await axios({
       method: 'post',
       url: '/logout',
@@ -83,6 +87,7 @@ export const getUserData = (history, dispatch, nextPage={}) => async () => {
       withCredentials: true,
     })
     dispatch(update(res.data));
+    socket.connect();
     if (nextPage.success) history.push(nextPage.success);
     return null;
   } catch (err) {
